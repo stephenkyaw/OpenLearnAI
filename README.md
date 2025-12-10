@@ -1,158 +1,237 @@
-# OpenLearnAI
+# OpenLearnAI 🎓
 
-OpenLearnAI is an **open-source, AI-powered learning platform** designed to help users learn efficiently from uploaded educational documents.  
-It converts PDFs, DOCX, or text files into **structured courses** with **units, chapters, and topics**, enriches content using AI, generates **quizzes and exercises**, and provides **personalized feedback**.
+> **AI-Powered Learning Platform** - Transform documents into interactive, structured courses with AI-generated content, quizzes, and personalized learning paths.
 
-This project leverages **PostgreSQL for structured data**, **Qdrant for semantic search**, and **LangChain for AI content generation**.  
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://stephenkyaw.github.io/OpenLearnAI/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 
----
+## 🌟 Live Demo
 
-## **Features**
+**[View Live Demo →](https://stephenkyaw.github.io/OpenLearnAI/)**
 
-### Core Features (Phase 1)
-- User registration and login  
-- Upload educational documents (PDF/DOCX)  
-- AI-generated course structure: units, chapters, topics  
-- Enriched content with examples and recommended free resources  
-- AI-generated quizzes and exercises per chapter  
-- Track user progress with AI-generated feedback  
-
-### Planned Features (Phase 2)
-- Adaptive learning recommendations  
-- Voice-based exercises for speaking practice  
-- Performance analytics dashboard  
-- Mobile-friendly PWA interface  
-- Collaborative learning and discussion features  
+Experience OpenLearnAI's modern, intuitive interface and AI-powered learning features.
 
 ---
 
-## **Architecture & Tech Stack**
+## ✨ Features
 
-**Backend**
-- Python + FastAPI  
-- PostgreSQL + SQLAlchemy ORM  
-- Qdrant for vector embeddings & semantic search  
-- LangChain for AI-powered content generation, quizzes, and feedback  
-- Celery + RabbitMQ for asynchronous AI tasks  
+### 📚 Course Management
+- **AI Course Generation** - Upload documents (PDF, DOCX, TXT) and automatically generate structured courses
+- **Interactive Learning** - Engage with AI-enriched content, examples, and multimedia resources
+- **Progress Tracking** - Monitor your learning journey with detailed progress indicators
+- **Course Library** - Browse and manage all your courses in one place
 
-**Frontend**
-- React + TypeScript  
-- Redux Toolkit + React Query  
-- TailwindCSS + shadcn/ui  
-- Vite  
+### 🎯 Learning Experience
+- **Structured Content** - Courses organized into modules, lessons, and topics
+- **Interactive Quizzes** - AI-generated quizzes with multiple choice, true/false, and open-ended questions
+- **Final Exams** - Comprehensive assessments to validate your knowledge
+- **External Resources** - Curated links to YouTube videos, articles, and additional learning materials
 
-**Microservices**
-1. `document-service` → handles document upload, chunking, and embeddings  
-2. `course-service` → generates structured courses using LangChain  
-3. `quiz-service` → generates AI quizzes and exercises  
-4. `user-service` → authentication and progress tracking  
-5. `feedback-service` → AI feedback and adaptive learning recommendations  
+### 👤 User Features
+- **Personal Dashboard** - Overview of active courses, progress, and achievements
+- **Profile Management** - Track learning stats, streaks, and earned certificates
+- **Settings** - Customize notifications, billing, and appearance preferences
+- **Achievements** - Earn badges and XP points for completing courses and maintaining streaks
 
----
-
-## **Database Architecture**
-
-### **PostgreSQL** (Structured Data)
-- Tables: `users`, `courses`, `units`, `chapters`, `quizzes`, `user_progress`  
-- JSONB fields for AI-enriched content (chapter text, examples, free resources)  
-
-### **Qdrant** (Vector Database)
-- Stores embeddings of document chunks, chapters, and quizzes  
-- Used for semantic search, AI recommendations, and adaptive learning  
-
-**Workflow Example:**
-1. User uploads document → PostgreSQL stores metadata  
-2. LangChain processes document → generates structured course content → saved in PostgreSQL JSONB  
-3. AI embeddings generated → stored in Qdrant  
-4. User queries or progresses → semantic search in Qdrant → relevant content & adaptive recommendations  
+### 🎨 Modern UI/UX
+- **Clean Design** - Minimalist, paper-like aesthetic with high contrast and optimal readability
+- **Responsive Layout** - Seamless experience across desktop, tablet, and mobile devices
+- **Dark Mode Ready** - Theme preferences for comfortable learning
+- **Smooth Animations** - Polished transitions and micro-interactions
 
 ---
 
-## **AI Agents & LangChain Roles**
+## 🏗️ Architecture & Tech Stack
 
-| Agent | Role |
-|-------|------|
-| Document Analyzer | Chunk documents and generate embeddings |
-| Course Generator | Create course units, chapters, topics using LangChain |
-| Content Improver | Enhance text clarity, add examples, summarize |
-| Resource Finder | Suggest free learning resources (YouTube, articles) |
-| Quiz Generator | Generate interactive quizzes & exercises |
-| Feedback Agent | Provide AI feedback on quiz/exercise answers |
-| Adaptive Learning Agent | Recommend next lessons based on performance and similarity search |
+### Frontend
+- **React 18** + **TypeScript** - Modern, type-safe UI development
+- **Vite** - Lightning-fast build tool and dev server
+- **TailwindCSS** - Utility-first CSS framework
+- **shadcn/ui** - High-quality, accessible component library
+- **React Router** - Client-side routing
+- **Lucide Icons** - Beautiful, consistent iconography
+
+### Backend (Planned)
+- **Python** + **FastAPI** - High-performance async API
+- **PostgreSQL** - Structured data storage with JSONB support
+- **Qdrant** - Vector database for semantic search
+- **LangChain** - AI content generation and processing
+- **Celery** + **RabbitMQ** - Asynchronous task processing
+
+### AI Capabilities
+- **Document Analysis** - Intelligent chunking and embedding generation
+- **Course Generation** - Automated structure creation (units, chapters, topics)
+- **Content Enrichment** - AI-enhanced explanations and examples
+- **Quiz Generation** - Contextual questions and assessments
+- **Adaptive Learning** - Personalized recommendations based on performance
 
 ---
 
-* **Frontend:** React-based web client for user interaction
-* **Backend Services:** Microservices handle document upload, course generation, quizzes, user progress, and adaptive learning
-* **Databases:** PostgreSQL stores structured & JSONB data; Qdrant stores embeddings for semantic search
-* **AI Layer (LangChain):** Manages LLM pipelines for content parsing, enrichment, quizzes, and recommendations
-
----
-
-## **Getting Started**
+## 🚀 Getting Started
 
 ### Prerequisites
-
-* Python 3.11+
-* Node.js 18+
-* PostgreSQL 15+
-* Docker & Docker Compose
+- **Node.js** 18+ 
+- **npm** or **yarn**
 
 ### Installation
 
-1. Clone the repository:
-
+1. **Clone the repository**
 ```bash
 git clone https://github.com/stephenkyaw/OpenLearnAI.git
 cd OpenLearnAI
 ```
 
-2. Setup backend:
-
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-3. Setup frontend:
-
+2. **Install frontend dependencies**
 ```bash
 cd frontend
 npm install
 ```
 
-4. Start services with Docker Compose:
-
+3. **Run development server**
 ```bash
-docker-compose up
+npm run dev
 ```
 
-* Qdrant runs on `http://localhost:6333`
-* PostgreSQL connection via Docker Compose
+The app will be available at `http://localhost:5173`
+
+4. **Build for production**
+```bash
+npm run build
+```
 
 ---
 
-## **Contribution**
+## 📁 Project Structure
 
-OpenLearnAI is **community-driven** and welcomes contributions:
-
-* Add AI features or new LangChain pipelines
-* Improve UI/UX with React/Tailwind
-* Create additional microservices
-* Optimize database design or workflow
-
-Please open issues or pull requests on GitHub.
+```
+OpenLearnAI/
+├── frontend/
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/          # Page components
+│   │   ├── layouts/        # Layout components
+│   │   ├── context/        # React context providers
+│   │   ├── lib/            # Utility functions
+│   │   └── App.tsx         # Main app component
+│   ├── public/             # Static assets
+│   └── package.json
+├── backend/                # Backend services (coming soon)
+└── README.md
+```
 
 ---
 
-## **License**
+## 🎨 Key Pages
 
-OpenLearnAI is licensed under the **MIT License** – free to use, modify, and distribute.
+### Dashboard
+- Welcome message and quick actions
+- Active course overview with progress
+- Stats cards (courses, completions, certificates)
+- In-progress courses list
+
+### My Courses
+- Grid/List view toggle
+- Filter by status (Active, Completed, Generating)
+- Search functionality
+- Pagination
+
+### Course Detail
+- Module-based navigation
+- Lesson content with markdown support
+- Interactive quizzes and exercises
+- Progress tracking
+- Final exam
+
+### Profile
+- User stats (streak, learning time, XP)
+- Skills progress bars
+- Recent achievements
+- Social links
+- Activity heatmap
+
+### Settings
+- Profile information management
+- Security settings
+- Notification preferences
+- Billing & subscription
+- Theme customization
 
 ---
 
-## **Contact**
+## 🤝 Contributing
 
-* GitHub: [https://github.com/stephenkyaw](https://github.com/stephenkyaw)
-* Email: [info.kyawmyo@gmail.com](mailto:info.kyawmyo@gmail.com)
+OpenLearnAI is **open-source** and welcomes contributions!
 
+### Ways to Contribute
+- 🐛 Report bugs and issues
+- 💡 Suggest new features
+- 🎨 Improve UI/UX design
+- 📝 Enhance documentation
+- 🔧 Submit pull requests
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Stephen Kyaw**
+- GitHub: [@stephenkyaw](https://github.com/stephenkyaw)
+- Email: [info.kyawmyo@gmail.com](mailto:info.kyawmyo@gmail.com)
+
+---
+
+## 🙏 Acknowledgments
+
+- **shadcn/ui** for the beautiful component library
+- **Lucide** for the icon set
+- **Tailwind CSS** for the styling framework
+- **Vite** for the blazing-fast build tool
+
+---
+
+## 🗺️ Roadmap
+
+### Phase 1 (Current)
+- ✅ Modern UI/UX design
+- ✅ Course browsing and navigation
+- ✅ Interactive quizzes and exams
+- ✅ User profile and settings
+- ✅ Responsive design
+
+### Phase 2 (Upcoming)
+- 🔄 Backend API integration
+- 🔄 AI course generation from documents
+- 🔄 Real user authentication
+- 🔄 Progress persistence
+- 🔄 Certificate generation
+
+### Phase 3 (Future)
+- 📱 Mobile app (React Native)
+- 🎤 Voice-based exercises
+- 📊 Advanced analytics dashboard
+- 👥 Collaborative learning features
+- 🌐 Multi-language support
+
+---
+
+<div align="center">
+
+**[⭐ Star this repo](https://github.com/stephenkyaw/OpenLearnAI)** if you find it useful!
+
+Made with ❤️ by [Stephen Kyaw](https://github.com/stephenkyaw)
+
+</div>
