@@ -11,6 +11,10 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,16 +27,16 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd frontend
-          npm ci
+        run: npm ci
 
       - name: Build
-        run: |
-          cd frontend
-          npm run build
+        run: npm run build
+      
+      - name: List dist contents
+        run: ls -la dist
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: frontend/dist
+          clean: true
