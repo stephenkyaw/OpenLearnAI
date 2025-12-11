@@ -1,7 +1,7 @@
 import { CourseLayout } from "@/layouts/CourseLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Globe, Award, LayoutDashboard, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Globe, Award, LayoutDashboard, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,9 @@ export function CoursePage() {
 
     // Track selected module quiz
     const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
+
+    // Track mobile menu state
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Fetch course on mount
     useEffect(() => {
@@ -74,13 +77,11 @@ export function CoursePage() {
         setViewMode('learning');
     };
 
-    const handleEnterExam = () => {
-        setViewMode('exam');
-    };
+
 
     return (
         <CourseLayout title={COURSE_CONTENT.title}>
-            <div className="flex h-[calc(100vh-3rem)] gap-4">
+            <div className="flex flex-col md:flex-row h-[calc(100vh-3rem)] gap-4">
 
                 {/* =========================================================
                     SIDEBAR NAVIGATION (Floating Glass)
@@ -88,185 +89,77 @@ export function CoursePage() {
                 {/* =========================================================
                     SIDEBAR NAVIGATION (Clean Solid White)
                    ========================================================= */}
-                <div className="w-80 flex-shrink-0 bg-white rounded-2xl hidden md:flex flex-col overflow-hidden transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full">
+                {/* =========================================================
+                    MOBILE HEADER & TOGGLE
+                   ========================================================= */}
+                <div className="md:hidden flex items-center justify-between bg-white p-4 rounded-xl border border-slate-100 mb-4 sticky top-0 z-30 shadow-sm">
+                    <span className="font-bold text-slate-900 truncate pr-4">{COURSE_CONTENT.title}</span>
+                    <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                    </Button>
+                </div>
 
-                    {/* Sidebar Header */}
-                    <div className="p-6 pb-4">
-                        <div className="flex items-center space-x-2 text-[10px] font-bold text-primary mb-3 uppercase tracking-wider bg-primary/5 border border-primary/10 w-fit px-3 py-1.5 rounded-full">
-                            <Globe className="w-3 h-3" />
-                            <span>Language Learning</span>
-                        </div>
-                        <h2 className="font-bold text-xl leading-snug mb-4 text-slate-900 cursor-pointer hover:text-primary transition-colors" onClick={() => setViewMode('overview')}>
-                            {COURSE_CONTENT.title}
-                        </h2>
+                {/* =========================================================
+                    MOBILE MENU OVERLAY (Side Sheet)
+                   ========================================================= */}
+                {isMobileMenuOpen && (
+                    <div className="md:hidden fixed inset-0 z-50 flex">
+                        {/* Backdrop */}
+                        <div
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        />
 
-                        <div className="mb-6">
-                            <Button
-                                variant={viewMode === 'overview' ? "secondary" : "ghost"}
-                                className={cn(
-                                    "w-full justify-start h-11 text-sm rounded-xl font-medium transition-all",
-                                    viewMode === 'overview'
-                                        ? "bg-slate-100 text-slate-900 border border-slate-200"
-                                        : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                                )}
-                                onClick={() => setViewMode('overview')}
-                            >
-                                <LayoutDashboard className="h-4 w-4 mr-3" /> Course Overview
-                            </Button>
-                        </div>
+                        {/* Drawer */}
+                        <div className="relative w-[85vw] max-w-[320px] bg-white h-full shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col">
 
-                        <div className="space-y-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
-                            <div className="flex justify-between text-xs font-semibold text-slate-500">
-                                <span className="flex items-center"><Award className="h-3 w-3 mr-1.5 text-amber-500" /> Progress</span>
-                                <span className="text-slate-900">{COURSE_CONTENT.progress}%</span>
+                            {/* Drawer Header */}
+                            <div className="flex items-center justify-between p-4 border-b border-slate-100">
+                                <span className="font-bold text-lg text-slate-800">Course Menu</span>
+                                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full hover:bg-slate-100">
+                                    <X className="h-5 w-5 text-slate-500" />
+                                </Button>
                             </div>
-                            <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden border border-slate-100">
-                                <div
-                                    className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-sm"
-                                    style={{ width: `${COURSE_CONTENT.progress}%` }}
+
+                            {/* Sidebar Content Reuse */}
+                            <div className="flex-1 overflow-y-auto">
+                                <SidebarContent
+                                    course={COURSE_CONTENT}
+                                    viewMode={viewMode}
+                                    setViewMode={(mode) => {
+                                        setViewMode(mode);
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    selectedLessonId={selectedLessonId}
+                                    setSelectedLessonId={(id) => {
+                                        setSelectedLessonId(id);
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    selectedModuleId={selectedModuleId}
+                                    setSelectedModuleId={(id) => {
+                                        setSelectedModuleId(id);
+                                        setIsMobileMenuOpen(false);
+                                    }}
                                 />
                             </div>
                         </div>
                     </div>
+                )}
 
-                    {/* Sidebar Content (Modules List) */}
-                    <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
-                        <div className="space-y-6">
-                            {COURSE_CONTENT.modules.map((module, idx) => (
-                                <div key={idx}>
-                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                                        {module.title}
-                                    </h3>
-                                    <div className="space-y-1">
-                                        {/* LESSONS */}
-                                        {module.lessons.map((lesson) => {
-                                            const hasQuiz = lesson.blocks.some(b => b.type === 'quiz');
-                                            const isSelected = viewMode === 'learning' && selectedLessonId === lesson.id;
+                {/* =========================================================
+                    DESKTOP SIDEBAR (Managed)
+                   ========================================================= */}
+                <div className="w-80 flex-shrink-0 bg-white rounded-2xl hidden md:flex flex-col overflow-hidden transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full">
+                    <SidebarContent
+                        course={COURSE_CONTENT}
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        selectedLessonId={selectedLessonId}
+                        setSelectedLessonId={setSelectedLessonId}
+                        selectedModuleId={selectedModuleId}
+                        setSelectedModuleId={setSelectedModuleId}
+                    />
 
-                                            return (
-                                                <div
-                                                    key={lesson.id}
-                                                    className={cn(
-                                                        "group flex w-full items-start gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
-                                                        isSelected ? "bg-primary/5" : ""
-                                                    )}
-                                                    onClick={() => {
-                                                        setViewMode('learning');
-                                                        setSelectedLessonId(lesson.id);
-                                                    }}
-                                                >
-                                                    {/* Active Indicator Line */}
-                                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", isSelected ? "bg-primary opacity-100" : "opacity-0")} />
-
-                                                    {/* Icon Status */}
-                                                    <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
-                                                        {lesson.completed ? (
-                                                            <CheckCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-emerald-500")} />
-                                                        ) : (
-                                                            <PlayCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-slate-400")} />
-                                                        )}
-                                                    </div>
-
-                                                    {/* Content */}
-                                                    <div className="flex-1 min-w-0">
-                                                        <h4 className={cn(
-                                                            "font-medium leading-snug mb-1.5 break-words transition-colors",
-                                                            isSelected ? "text-primary font-semibold" : "text-slate-700 group-hover:text-slate-900"
-                                                        )}>
-                                                            {lesson.title}
-                                                        </h4>
-
-                                                        <div className="flex flex-wrap items-center gap-2">
-                                                            <span className="text-[10px] text-slate-400 flex items-center font-medium">
-                                                                {lesson.duration || "20m"}
-                                                            </span>
-                                                            {hasQuiz && (
-                                                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 font-bold tracking-wide uppercase">
-                                                                    Quiz
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-
-                                        {/* MODULE QUIZ */}
-                                        {module.quiz && (
-                                            <div className="mt-2">
-                                                <div
-                                                    className={cn(
-                                                        "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
-                                                        viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-50/50" : ""
-                                                    )}
-                                                    onClick={() => {
-                                                        setViewMode('module-quiz');
-                                                        setSelectedModuleId(module.id);
-                                                    }}
-                                                >
-                                                    {/* Active Indicator Line */}
-                                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-600 opacity-100" : "opacity-0")} />
-
-                                                    <div className="shrink-0 transition-transform group-hover:scale-110">
-                                                        <Flag className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-600" : "text-slate-400")} />
-                                                    </div>
-
-                                                    <span className={cn(
-                                                        "font-medium transition-colors",
-                                                        viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
-                                                    )}>
-                                                        {module.quiz.title}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-
-                            {/* Final Exam Link */}
-                            <div className="mt-8 pt-4 border-t border-slate-100">
-                                <h3 className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Final Assessment</h3>
-                                <button
-                                    type="button"
-                                    className={cn(
-                                        "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-red-500/20 z-20",
-                                        viewMode === 'exam' ? "bg-red-50/50" : ""
-                                    )}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        console.log("Final Exam Button Clicked");
-                                        handleEnterExam();
-                                    }}
-                                >
-                                    {/* Active Indicator Line */}
-                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'exam' ? "bg-red-600 opacity-100" : "opacity-0")} />
-
-                                    <div className="shrink-0 transition-transform group-hover:scale-110">
-                                        <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-red-600" : "text-slate-400")} />
-                                    </div>
-
-                                    <span className={cn(
-                                        "font-medium transition-colors",
-                                        viewMode === 'exam' ? "text-red-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
-                                    )}>
-                                        Final Exam
-                                    </span>
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {/* Sidebar Footer - Exit Button */}
-                    <div className="p-4 border-t border-slate-100 bg-white z-10">
-                        <Link to="/dashboard">
-                            <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg h-10 px-3 transition-colors font-medium text-sm">
-                                <LogOut className="h-4 w-4 mr-3" />
-                                Exit Course
-                            </Button>
-                        </Link>
-                    </div>
                 </div>
 
                 {/* =========================================================
@@ -541,10 +434,10 @@ export function CoursePage() {
                                         </button>
 
                                         <button
-                                            className="flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-bold text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 group"
+                                            className="flex items-center gap-3 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-bold text-base md:text-lg md:px-8 md:py-4 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 group"
                                             onClick={() => currentLesson && completeLesson(currentLesson.id)}
                                         >
-                                            {currentLesson?.completed ? "Next Lesson" : "Complete & Continue"}
+                                            {currentLesson?.completed ? "Next Lesson" : "Complete"}
                                             <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                                         </button>
                                     </div>
@@ -555,5 +448,213 @@ export function CoursePage() {
                 </div>
             </div>
         </CourseLayout >
+    );
+}
+
+// =========================================================
+// SIDEBAR CONTENT COMPONENT
+// =========================================================
+interface SidebarContentProps {
+    course: any; // Using any for simplicity as CourseData type is internal
+    viewMode: string;
+    setViewMode: (mode: 'overview' | 'learning' | 'module-quiz' | 'exam') => void;
+    selectedLessonId: string;
+    setSelectedLessonId: (id: string) => void;
+    selectedModuleId: string | null;
+    setSelectedModuleId: (id: string) => void;
+}
+
+function SidebarContent({
+    course,
+    viewMode,
+    setViewMode,
+    selectedLessonId,
+    setSelectedLessonId,
+    selectedModuleId,
+    setSelectedModuleId
+}: SidebarContentProps) {
+    const handleEnterExam = () => {
+        setViewMode('exam');
+    };
+
+    return (
+        <>
+            {/* Sidebar Header */}
+            <div className="p-6 pb-4">
+                <div className="flex items-center space-x-2 text-[10px] font-bold text-primary mb-3 uppercase tracking-wider bg-primary/5 border border-primary/10 w-fit px-3 py-1.5 rounded-full">
+                    <Globe className="w-3 h-3" />
+                    <span>Language Learning</span>
+                </div>
+                <h2 className="font-bold text-xl leading-snug mb-4 text-slate-900 cursor-pointer hover:text-primary transition-colors" onClick={() => setViewMode('overview')}>
+                    {course.title}
+                </h2>
+
+                <div className="mb-6">
+                    <Button
+                        variant={viewMode === 'overview' ? "secondary" : "ghost"}
+                        className={cn(
+                            "w-full justify-start h-11 text-sm rounded-xl font-medium transition-all",
+                            viewMode === 'overview'
+                                ? "bg-slate-100 text-slate-900 border border-slate-200"
+                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                        )}
+                        onClick={() => setViewMode('overview')}
+                    >
+                        <LayoutDashboard className="h-4 w-4 mr-3" /> Course Overview
+                    </Button>
+                </div>
+
+                <div className="space-y-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                    <div className="flex justify-between text-xs font-semibold text-slate-500">
+                        <span className="flex items-center"><Award className="h-3 w-3 mr-1.5 text-amber-500" /> Progress</span>
+                        <span className="text-slate-900">{course.progress}%</span>
+                    </div>
+                    <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden border border-slate-100">
+                        <div
+                            className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-sm"
+                            style={{ width: `${course.progress}%` }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Sidebar Content (Modules List) */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
+                <div className="space-y-6">
+                    {course.modules.map((module: any, idx: number) => (
+                        <div key={idx}>
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                                {module.title}
+                            </h3>
+                            <div className="space-y-1">
+                                {/* LESSONS */}
+                                {module.lessons?.map((lesson: any) => {
+                                    const hasQuiz = lesson.blocks.some((b: any) => b.type === 'quiz');
+                                    const isSelected = viewMode === 'learning' && selectedLessonId === lesson.id;
+
+                                    return (
+                                        <div
+                                            key={lesson.id}
+                                            className={cn(
+                                                "group flex w-full items-start gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
+                                                isSelected ? "bg-primary/5" : ""
+                                            )}
+                                            onClick={() => {
+                                                setViewMode('learning');
+                                                setSelectedLessonId(lesson.id);
+                                            }}
+                                        >
+                                            {/* Active Indicator Line */}
+                                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", isSelected ? "bg-primary opacity-100" : "opacity-0")} />
+
+                                            {/* Icon Status */}
+                                            <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
+                                                {lesson.completed ? (
+                                                    <CheckCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-emerald-500")} />
+                                                ) : (
+                                                    <PlayCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-slate-400")} />
+                                                )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className={cn(
+                                                    "font-medium leading-snug mb-1.5 break-words transition-colors",
+                                                    isSelected ? "text-primary font-semibold" : "text-slate-700 group-hover:text-slate-900"
+                                                )}>
+                                                    {lesson.title}
+                                                </h4>
+
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <span className="text-[10px] text-slate-400 flex items-center font-medium">
+                                                        {lesson.duration || "20m"}
+                                                    </span>
+                                                    {hasQuiz && (
+                                                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 font-bold tracking-wide uppercase">
+                                                            Quiz
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {/* MODULE QUIZ */}
+                                {module.quiz && (
+                                    <div className="mt-2">
+                                        <div
+                                            className={cn(
+                                                "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
+                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-50/50" : ""
+                                            )}
+                                            onClick={() => {
+                                                setViewMode('module-quiz');
+                                                setSelectedModuleId(module.id);
+                                            }}
+                                        >
+                                            {/* Active Indicator Line */}
+                                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-600 opacity-100" : "opacity-0")} />
+
+                                            <div className="shrink-0 transition-transform group-hover:scale-110">
+                                                <Flag className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-600" : "text-slate-400")} />
+                                            </div>
+
+                                            <span className={cn(
+                                                "font-medium transition-colors",
+                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
+                                            )}>
+                                                {module.quiz.title}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Final Exam Link */}
+                    <div className="mt-8 pt-4 border-t border-slate-100">
+                        <h3 className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Final Assessment</h3>
+                        <button
+                            type="button"
+                            className={cn(
+                                "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-red-500/20 z-20",
+                                viewMode === 'exam' ? "bg-red-50/50" : ""
+                            )}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleEnterExam();
+                            }}
+                        >
+                            {/* Active Indicator Line */}
+                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'exam' ? "bg-red-600 opacity-100" : "opacity-0")} />
+
+                            <div className="shrink-0 transition-transform group-hover:scale-110">
+                                <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-red-600" : "text-slate-400")} />
+                            </div>
+
+                            <span className={cn(
+                                "font-medium transition-colors",
+                                viewMode === 'exam' ? "text-red-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
+                            )}>
+                                Final Exam
+                            </span>
+                        </button>
+                    </div>
+
+                </div>
+
+                {/* Sidebar Footer - Exit Button */}
+                <div className="p-4 border-t border-slate-100 bg-white z-10 mt-auto">
+                    <Link to="/dashboard">
+                        <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg h-10 px-3 transition-colors font-medium text-sm">
+                            <LogOut className="h-4 w-4 mr-3" />
+                            Exit Course
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        </>
     );
 }
