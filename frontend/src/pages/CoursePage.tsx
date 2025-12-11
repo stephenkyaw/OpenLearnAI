@@ -1,7 +1,7 @@
 import { CourseLayout } from "@/layouts/CourseLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Globe, Award, LayoutDashboard, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle, Menu, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Award, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
 import { cn } from "@/lib/utils";
@@ -143,7 +143,7 @@ export function CoursePage() {
                 {/* =========================================================
                     DESKTOP SIDEBAR (Managed)
                    ========================================================= */}
-                <div className="w-80 flex-shrink-0 bg-card rounded-2xl hidden md:flex flex-col overflow-hidden transition-all hover:shadow-2xl hover:shadow-primary/5 border border-border/50 h-full backdrop-blur-sm">
+                <div className="w-80 flex-shrink-0 bg-card rounded-3xl hidden md:flex flex-col overflow-hidden h-full border border-border/50 shadow-sm">
                     <SidebarContent
                         course={COURSE_CONTENT}
                         viewMode={viewMode}
@@ -159,12 +159,12 @@ export function CoursePage() {
                 {/* =========================================================
                     MAIN CONTENT AREA (Solid Premium White)
                    ========================================================= */}
-                <div className="flex-1 bg-card rounded-2xl flex flex-col overflow-hidden relative shadow-sm border border-border/50">
+                <div className="flex-1 bg-card rounded-3xl flex flex-col overflow-hidden relative border border-border/50 shadow-sm">
 
                     {/* --- VIEW: OVERVIEW --- */}
                     {viewMode === 'overview' && (
                         <ScrollArea key="overview" className="flex-1 bg-card">
-                            <div className="px-8 py-10 max-w-5xl mx-auto">
+                            <div className="px-6 py-8 max-w-5xl mx-auto">
                                 <CourseOverview
                                     title={COURSE_CONTENT.title}
                                     description={COURSE_CONTENT.description}
@@ -191,7 +191,7 @@ export function CoursePage() {
                                 }}
                             />
                         ) : (
-                            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                            <div className="flex items-center justify-center text-muted-foreground">
                                 Exam content not found.
                             </div>
                         )
@@ -200,7 +200,7 @@ export function CoursePage() {
                     {/* --- VIEW: MODULE QUIZ --- */}
                     {viewMode === 'module-quiz' && currentModule?.quiz && (
                         <ScrollArea key="quiz" className="flex-1 bg-card">
-                            <div className="px-8 py-16 max-w-4xl mx-auto">
+                            <div className="px-6 py-8 max-w-4xl mx-auto">
                                 {/* Quiz Header */}
                                 <div className="mb-12 text-center">
                                     <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
@@ -238,9 +238,9 @@ export function CoursePage() {
                     {viewMode === 'learning' && (
                         <>
                             <ScrollArea className="flex-1 bg-card">
-                                <div className="max-w-4xl mx-auto px-8 py-10">
+                                <div className="max-w-4xl mx-auto px-6 py-8">
                                     {/* Chapter Header */}
-                                    <div className="mb-10 text-center">
+                                    <div className="mb-8 text-center">
                                         <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
                                             {currentModule?.title}
                                         </div>
@@ -268,7 +268,7 @@ export function CoursePage() {
 
                                     {/* Description/Intro */}
                                     {currentLesson?.description && (
-                                        <div className="text-xl text-muted-foreground leading-relaxed font-serif mb-12 border-l-4 border-primary/20 pl-6 italic">
+                                        <div className="text-xl text-muted-foreground leading-relaxed font-serif mb-8 border-l-4 border-primary/20 pl-6 italic">
                                             {currentLesson.description}
                                         </div>
                                     )}
@@ -418,19 +418,22 @@ export function CoursePage() {
                                         </div>
                                     ))}
                                     {/* Inline Navigation (Book Style) */}
-                                    <div className="mt-24 pt-10 border-t border-border/50 flex items-center justify-between">
-                                        <button className="flex items-center gap-2 px-6 py-4 text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-all font-medium group text-lg">
-                                            <ChevronLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                                            Previous
-                                        </button>
-
-                                        <button
-                                            className="flex items-center gap-3 px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all font-bold text-base md:text-lg md:px-8 md:py-4 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 group"
-                                            onClick={() => currentLesson && completeLesson(currentLesson.id)}
+                                    <div className="mt-16 pt-8 flex items-center justify-between">
+                                        <Button
+                                            variant="ghost"
+                                            className="h-10 px-4"
                                         >
-                                            {currentLesson?.completed ? "Next Lesson" : "Complete"}
-                                            <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                                        </button>
+                                            <ChevronLeft className="h-4 w-4 mr-2" />
+                                            Previous
+                                        </Button>
+
+                                        <Button
+                                            onClick={() => currentLesson && completeLesson(currentLesson.id)}
+                                            className="h-10 px-6 shadow-lg shadow-primary/25"
+                                        >
+                                            {currentLesson?.completed ? "Next" : "Complete"}
+                                            <ChevronRight className="h-4 w-4 ml-2" />
+                                        </Button>
                                     </div>
                                 </div>
                             </ScrollArea>
@@ -464,37 +467,20 @@ function SidebarContent({
     selectedModuleId,
     setSelectedModuleId
 }: SidebarContentProps) {
-    const handleEnterExam = () => {
-        setViewMode('exam');
-    };
 
     return (
         <>
             {/* Sidebar Header */}
             <div className="p-6 pb-4">
-                <div className="flex items-center space-x-2 text-[10px] font-bold text-primary mb-3 uppercase tracking-wider bg-primary/5 border border-primary/10 w-fit px-3 py-1.5 rounded-full">
-                    <Globe className="w-3 h-3" />
-                    <span>Language Learning</span>
-                </div>
-                <h2 className="font-bold text-xl leading-snug mb-4 text-foreground cursor-pointer hover:text-primary transition-colors" onClick={() => setViewMode('overview')}>
+                {/* Course Title - Clickable to Overview */}
+                <h2
+                    className="font-bold text-xl leading-snug mb-6 text-foreground cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => setViewMode('overview')}
+                >
                     {course.title}
                 </h2>
 
-                <div className="mb-6">
-                    <Button
-                        variant={viewMode === 'overview' ? "secondary" : "ghost"}
-                        className={cn(
-                            "w-full justify-start h-11 text-sm rounded-xl font-medium transition-all",
-                            viewMode === 'overview'
-                                ? "bg-muted text-foreground border border-border"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                        )}
-                        onClick={() => setViewMode('overview')}
-                    >
-                        <LayoutDashboard className="h-4 w-4 mr-3" /> Course Overview
-                    </Button>
-                </div>
-
+                {/* Progress Card */}
                 <div className="space-y-3 bg-muted/30 p-4 rounded-2xl border border-border/50">
                     <div className="flex justify-between text-xs font-semibold text-muted-foreground">
                         <span className="flex items-center"><Award className="h-3 w-3 mr-1.5 text-primary" /> Progress</span>
@@ -506,17 +492,43 @@ function SidebarContent({
                             style={{ width: `${course.progress}%` }}
                         />
                     </div>
+                    {/* Stats Row */}
+                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <div className="text-center">
+                            <div className="text-xs font-bold text-foreground">{course.modules.length}</div>
+                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Modules</div>
+                        </div>
+                        <div className="h-6 w-px bg-border/30" />
+                        <div className="text-center">
+                            <div className="text-xs font-bold text-foreground">
+                                {course.modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0)}
+                            </div>
+                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Lessons</div>
+                        </div>
+                        <div className="h-6 w-px bg-border/30" />
+                        <div className="text-center">
+                            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                {course.modules.reduce((acc: number, m: any) =>
+                                    acc + (m.lessons?.filter((l: any) => l.completed).length || 0), 0
+                                )}
+                            </div>
+                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Done</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Sidebar Content (Modules List) */}
-            <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0 bg-card/50">
+            <div className="flex-1 overflow-y-auto px-6 py-6 min-h-0">
                 <div className="space-y-6">
                     {course.modules.map((module: any, idx: number) => (
                         <div key={idx}>
-                            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                                {module.title}
-                            </h3>
+                            {/* Module Header */}
+                            <div className="mb-3">
+                                <h3 className="text-[11px] font-bold text-foreground uppercase tracking-widest">
+                                    {module.title}
+                                </h3>
+                            </div>
                             <div className="space-y-1">
                                 {/* LESSONS */}
                                 {module.lessons?.map((lesson: any) => {
@@ -527,43 +539,41 @@ function SidebarContent({
                                         <div
                                             key={lesson.id}
                                             className={cn(
-                                                "group flex w-full items-start gap-4 p-3 text-sm transition-all hover:bg-muted/50 duration-200 rounded-lg relative cursor-pointer",
-                                                isSelected ? "bg-primary/5" : ""
+                                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
+                                                isSelected
+                                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
+                                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                             )}
                                             onClick={() => {
                                                 setViewMode('learning');
                                                 setSelectedLessonId(lesson.id);
                                             }}
                                         >
-                                            {/* Active Indicator Line */}
-                                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", isSelected ? "bg-primary opacity-100" : "opacity-0")} />
-
                                             {/* Icon Status */}
-                                            <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
+                                            <div className="shrink-0">
                                                 {lesson.completed ? (
-                                                    <CheckCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-emerald-500")} />
+                                                    <CheckCircle className={cn("h-4 w-4", isSelected ? "text-white" : "text-emerald-500")} />
                                                 ) : (
-                                                    <PlayCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-muted-foreground")} />
+                                                    <PlayCircle className={cn("h-4 w-4", isSelected ? "text-white" : "")} />
                                                 )}
                                             </div>
 
                                             {/* Content */}
                                             <div className="flex-1 min-w-0">
-                                                <h4 className={cn(
-                                                    "font-medium leading-snug mb-1.5 break-words transition-colors",
-                                                    isSelected ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground"
-                                                )}>
+                                                <div className="font-medium leading-snug truncate">
                                                     {lesson.title}
-                                                </h4>
-
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="text-[10px] text-muted-foreground/70 flex items-center font-medium">
+                                                </div>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <span className={cn("text-[10px]", isSelected ? "text-white/80" : "text-muted-foreground/70")}>
                                                         {lesson.duration || "20m"}
                                                     </span>
                                                     {hasQuiz && (
-                                                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-600 font-bold tracking-wide uppercase border border-orange-500/20">
-                                                            Quiz
-                                                        </span>
+                                                        <>
+                                                            <span className={cn("text-[10px]", isSelected ? "text-white/60" : "text-muted-foreground/40")}>•</span>
+                                                            <span className={cn("text-[10px]", isSelected ? "text-white/80" : "text-muted-foreground/70")}>
+                                                                Quiz
+                                                            </span>
+                                                        </>
                                                     )}
                                                 </div>
                                             </div>
@@ -573,29 +583,26 @@ function SidebarContent({
 
                                 {/* MODULE QUIZ */}
                                 {module.quiz && (
-                                    <div className="mt-2">
+                                    <div className="mt-3">
                                         <div
                                             className={cn(
-                                                "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-muted/50 duration-200 rounded-lg relative cursor-pointer",
-                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-primary/5" : ""
+                                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
+                                                viewMode === 'module-quiz' && selectedModuleId === module.id
+                                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
+                                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                                             )}
                                             onClick={() => {
                                                 setViewMode('module-quiz');
                                                 setSelectedModuleId(module.id);
                                             }}
                                         >
-                                            {/* Active Indicator Line */}
-                                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-primary opacity-100" : "opacity-0")} />
-
-                                            <div className="shrink-0 transition-transform group-hover:scale-110">
-                                                <Flag className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-primary" : "text-muted-foreground")} />
-                                            </div>
-
+                                            <CheckCircle className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-white" : "")} />
+                                            <span className="font-medium flex-1">Module {idx + 1} Quiz</span>
                                             <span className={cn(
-                                                "font-medium transition-colors",
-                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground"
+                                                "text-[10px] font-semibold",
+                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-white/80" : "text-muted-foreground/70"
                                             )}>
-                                                {module.quiz.title}
+                                                {module.quiz.questions.length} Q
                                             </span>
                                         </div>
                                     </div>
@@ -604,45 +611,29 @@ function SidebarContent({
                         </div>
                     ))}
 
-                    {/* Final Exam Link */}
-                    <div className="mt-8 pt-4 border-t border-border/50">
-                        <h3 className="px-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Final Assessment</h3>
-                        <button
-                            type="button"
+                    {/* Final Exam */}
+                    <div className="mt-4">
+                        <div
                             className={cn(
-                                "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-muted duration-200 rounded-lg relative cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-destructive/20 z-20",
-                                viewMode === 'exam' ? "bg-destructive/10" : ""
+                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
+                                viewMode === 'exam'
+                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
+                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                             )}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleEnterExam();
-                            }}
+                            onClick={() => setViewMode('exam')}
                         >
-                            {/* Active Indicator Line */}
-                            <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'exam' ? "bg-destructive opacity-100" : "opacity-0")} />
-
-                            <div className="shrink-0 transition-transform group-hover:scale-110">
-                                <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-destructive" : "text-muted-foreground")} />
-                            </div>
-
-                            <span className={cn(
-                                "font-medium transition-colors",
-                                viewMode === 'exam' ? "text-destructive font-semibold" : "text-muted-foreground group-hover:text-foreground"
-                            )}>
-                                Final Exam
-                            </span>
-                        </button>
+                            <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-white" : "")} />
+                            <span className="font-medium flex-1">Final Exam</span>
+                        </div>
                     </div>
 
                 </div>
 
                 {/* Sidebar Footer - Exit Button */}
-                <div className="p-4 border-t border-border/50 bg-card z-10 mt-auto">
-                    <Link to="/dashboard">
-                        <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg h-10 px-3 transition-colors font-medium text-sm">
-                            <LogOut className="h-4 w-4 mr-3" />
-                            Exit Course
-                        </Button>
+                <div className="p-6">
+                    <Link to="/dashboard" className="flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-destructive transition-colors">
+                        <LogOut className="h-3.5 w-3.5" />
+                        <span>Exit Course</span>
                     </Link>
                 </div>
             </div>

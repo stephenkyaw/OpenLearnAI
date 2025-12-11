@@ -197,9 +197,9 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
     return (
         <div className="flex-1 overflow-y-auto bg-card h-full">
-            <div className="max-w-4xl mx-auto px-8 py-16">
+            <div className="max-w-4xl mx-auto px-6 py-8">
                 {/* Sticky Header */}
-                <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-6 mb-12 flex justify-between items-center -mx-8 px-8 border-b border-border/50">
+                <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-4 mb-8 flex justify-between items-center -mx-6 px-6">
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">{title}</h2>
                         <p className="text-sm text-muted-foreground mt-1">{questions.length} questions • {passingScore}% to pass</p>
@@ -355,7 +355,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                         onClick={handleSubmit}
                         disabled={Object.keys(answers).length < questions.length}
                     >
-                        Submit Final Exam
+                        Submit
                     </button>
                 </div>
             </div>

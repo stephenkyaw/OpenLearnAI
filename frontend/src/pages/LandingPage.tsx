@@ -84,7 +84,7 @@ export function LandingPage() {
             <footer className="bg-background py-12 border-t border-border">
                 <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
                     <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                        <BookOpen className="h-6 w-6 text-indigo-600" />
+                        <BookOpen className="h-6 w-6 text-primary" />
                         <span className="font-bold text-lg">OpenLearnAI</span>
                     </div>
                     <p className="text-sm text-muted-foreground">

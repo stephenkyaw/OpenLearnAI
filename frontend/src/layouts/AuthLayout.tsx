@@ -38,13 +38,13 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
                     </div>
 
                     {/* Footer */}
-                    <div className="mt-6 text-center text-xs text-slate-500">
+                    <div className="mt-6 text-center text-xs text-muted-foreground">
                         By continuing, you agree to our{" "}
-                        <Link to="/terms" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                        <Link to="/terms" className="text-primary hover:text-primary/80 font-medium">
                             Terms of Service
                         </Link>{" "}
                         and{" "}
-                        <Link to="/privacy" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                        <Link to="/privacy" className="text-primary hover:text-primary/80 font-medium">
                             Privacy Policy
                         </Link>
                         .

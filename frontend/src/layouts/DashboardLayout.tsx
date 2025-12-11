@@ -92,7 +92,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     {/* User Footer */}
                     <div className="p-6 mt-auto border-t border-border/50 bg-muted/20">
                         <div className="flex items-center space-x-3 mb-4 px-2">
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white">
                                 JD
                             </div>
                             <div className="overflow-hidden">
@@ -138,7 +138,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                             <ModeToggle />
                             <BellWithDropdown />
                             <Link to="/dashboard/profile">
-                                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all">
+                                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all">
                                     JD
                                 </div>
                             </Link>

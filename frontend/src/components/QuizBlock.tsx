@@ -302,7 +302,7 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                         disabled={!allAnswered}
                         className="px-8 py-2.5 rounded-lg font-medium transition-colors"
                     >
-                        Submit Answers
+                        Submit
                     </Button>
                 </div>
             )}

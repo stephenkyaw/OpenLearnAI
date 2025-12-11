@@ -149,10 +149,10 @@ export function ProfilePage() {
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white text-center shadow-lg">
+                        <div className="bg-gradient-to-br from-primary to-purple-700 rounded-3xl p-8 text-white text-center shadow-lg">
                             <h3 className="font-bold text-lg mb-2">Upgrade to Pro</h3>
-                            <p className="text-indigo-100 text-sm mb-4">Unlock unlimited AI generation and advanced analytics.</p>
-                            <Button className="w-full h-11 rounded-xl bg-white text-indigo-600 hover:bg-slate-50 font-semibold">View Plans</Button>
+                            <p className="text-primary-foreground/80 text-sm mb-4">Unlock unlimited AI generation and advanced analytics.</p>
+                            <Button className="w-full h-11 rounded-xl bg-white text-primary hover:bg-slate-50 font-semibold">View Plans</Button>
                         </div>
                     </div>
                 </div>
