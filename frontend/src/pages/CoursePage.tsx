@@ -1,10 +1,11 @@
 import { CourseLayout } from "@/layouts/CourseLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Globe, Award, LayoutDashboard, Flag, Clock, Loader2, AlertCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Globe, Award, LayoutDashboard, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 import { QuizBlock } from "@/components/QuizBlock";
 import { CourseOverview } from "@/components/CourseOverview";
 import { FinalExam } from "@/components/FinalExam";
@@ -79,7 +80,7 @@ export function CoursePage() {
 
     return (
         <CourseLayout title={COURSE_CONTENT.title}>
-            <div className="flex h-[calc(100vh-7rem)] gap-6">
+            <div className="flex h-[calc(100vh-3rem)] gap-4">
 
                 {/* =========================================================
                     SIDEBAR NAVIGATION (Floating Glass)
@@ -87,7 +88,7 @@ export function CoursePage() {
                 {/* =========================================================
                     SIDEBAR NAVIGATION (Clean Solid White)
                    ========================================================= */}
-                <div className="w-96 flex-shrink-0 bg-white rounded-3xl hidden md:flex flex-col overflow-hidden transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full">
+                <div className="w-80 flex-shrink-0 bg-white rounded-2xl hidden md:flex flex-col overflow-hidden transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 h-full">
 
                     {/* Sidebar Header */}
                     <div className="p-6 pb-4">
@@ -129,7 +130,7 @@ export function CoursePage() {
                     </div>
 
                     {/* Sidebar Content (Modules List) */}
-                    <ScrollArea className="flex-1 min-h-0 px-6 py-4">
+                    <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
                         <div className="space-y-6">
                             {COURSE_CONTENT.modules.map((module, idx) => (
                                 <div key={idx}>
@@ -143,62 +144,80 @@ export function CoursePage() {
                                             const isSelected = viewMode === 'learning' && selectedLessonId === lesson.id;
 
                                             return (
-                                                <Button
+                                                <div
                                                     key={lesson.id}
-                                                    variant="ghost"
                                                     className={cn(
-                                                        "w-full justify-start text-sm h-auto py-3.5 px-4 relative rounded-xl transition-all duration-300 border border-transparent",
-                                                        isSelected
-                                                            ? "bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary/90 border-primary/50"
-                                                            : "text-muted-foreground hover:bg-black/5 hover:text-foreground hover:border-black/5"
+                                                        "group flex w-full items-start gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
+                                                        isSelected ? "bg-primary/5" : ""
                                                     )}
                                                     onClick={() => {
                                                         setViewMode('learning');
                                                         setSelectedLessonId(lesson.id);
                                                     }}
                                                 >
-                                                    {lesson.completed ? (
-                                                        <CheckCircle className={cn("h-4 w-4 mr-3 flex-shrink-0", isSelected ? "text-white" : "text-emerald-500")} />
-                                                    ) : (
-                                                        <PlayCircle className={cn("h-4 w-4 mr-3 flex-shrink-0", isSelected ? "text-white" : "text-muted-foreground")} />
-                                                    )}
-                                                    <div className="flex-1 text-left leading-snug">
-                                                        <span className="block font-medium">
+                                                    {/* Active Indicator Line */}
+                                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", isSelected ? "bg-primary opacity-100" : "opacity-0")} />
+
+                                                    {/* Icon Status */}
+                                                    <div className="mt-0.5 shrink-0 transition-transform group-hover:scale-110">
+                                                        {lesson.completed ? (
+                                                            <CheckCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-emerald-500")} />
+                                                        ) : (
+                                                            <PlayCircle className={cn("h-4 w-4", isSelected ? "text-primary" : "text-slate-400")} />
+                                                        )}
+                                                    </div>
+
+                                                    {/* Content */}
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className={cn(
+                                                            "font-medium leading-snug mb-1.5 break-words transition-colors",
+                                                            isSelected ? "text-primary font-semibold" : "text-slate-700 group-hover:text-slate-900"
+                                                        )}>
                                                             {lesson.title}
-                                                        </span>
-                                                        <div className="flex items-center space-x-2 mt-1">
-                                                            <span className={cn("text-[9px] flex items-center px-1.5 py-0.5 rounded border opacity-90", isSelected ? "bg-white/20 border-white/20 text-white" : "bg-black/5 border-black/5 text-muted-foreground")}>
-                                                                <Clock className="h-2 w-2 mr-1" /> {lesson.duration || "20m"}
+                                                        </h4>
+
+                                                        <div className="flex flex-wrap items-center gap-2">
+                                                            <span className="text-[10px] text-slate-400 flex items-center font-medium">
+                                                                {lesson.duration || "20m"}
                                                             </span>
                                                             {hasQuiz && (
-                                                                <span className={cn("text-[9px] flex items-center px-1.5 py-0.5 rounded border font-bold", isSelected ? "bg-white/20 border-white/20 text-white" : "bg-orange-50 text-orange-600 border-orange-200")}>
-                                                                    QUIZ
+                                                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 font-bold tracking-wide uppercase">
+                                                                    Quiz
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                </Button>
+                                                </div>
                                             );
                                         })}
 
                                         {/* MODULE QUIZ */}
                                         {module.quiz && (
-                                            <div className="mt-3">
-                                                <button
+                                            <div className="mt-2">
+                                                <div
                                                     className={cn(
-                                                        "w-full px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center border-2 border-dashed",
-                                                        viewMode === 'module-quiz' && selectedModuleId === module.id
-                                                            ? "bg-indigo-50 text-indigo-700 border-indigo-300"
-                                                            : "text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300"
+                                                        "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer",
+                                                        viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-50/50" : ""
                                                     )}
                                                     onClick={() => {
                                                         setViewMode('module-quiz');
                                                         setSelectedModuleId(module.id);
                                                     }}
                                                 >
-                                                    <Flag className="h-4 w-4 mr-2 flex-shrink-0" />
-                                                    <span className="text-xs font-semibold">{module.quiz.title}</span>
-                                                </button>
+                                                    {/* Active Indicator Line */}
+                                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'module-quiz' && selectedModuleId === module.id ? "bg-indigo-600 opacity-100" : "opacity-0")} />
+
+                                                    <div className="shrink-0 transition-transform group-hover:scale-110">
+                                                        <Flag className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-600" : "text-slate-400")} />
+                                                    </div>
+
+                                                    <span className={cn(
+                                                        "font-medium transition-colors",
+                                                        viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-indigo-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
+                                                    )}>
+                                                        {module.quiz.title}
+                                                    </span>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -206,77 +225,127 @@ export function CoursePage() {
                             ))}
 
                             {/* Final Exam Link */}
-                            <div className="mt-6 pt-6 border-t border-slate-100">
+                            <div className="mt-8 pt-4 border-t border-slate-100">
+                                <h3 className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Final Assessment</h3>
                                 <button
+                                    type="button"
                                     className={cn(
-                                        "w-full px-4 py-4 rounded-lg text-sm font-bold transition-all flex items-center border-2",
-                                        viewMode === 'exam'
-                                            ? "bg-red-50 text-red-700 border-red-300"
-                                            : "text-red-700 border-red-200 hover:bg-red-50 hover:border-red-300"
+                                        "group flex w-full items-center gap-4 p-3 text-sm transition-all hover:bg-slate-50 duration-200 rounded-lg relative cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-red-500/20 z-20",
+                                        viewMode === 'exam' ? "bg-red-50/50" : ""
                                     )}
-                                    onClick={handleEnterExam}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        console.log("Final Exam Button Clicked");
+                                        handleEnterExam();
+                                    }}
                                 >
-                                    <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                        <Award className="h-4 w-4 text-red-600" />
+                                    {/* Active Indicator Line */}
+                                    <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-full transition-all duration-300", viewMode === 'exam' ? "bg-red-600 opacity-100" : "opacity-0")} />
+
+                                    <div className="shrink-0 transition-transform group-hover:scale-110">
+                                        <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-red-600" : "text-slate-400")} />
                                     </div>
-                                    Final Exam
+
+                                    <span className={cn(
+                                        "font-medium transition-colors",
+                                        viewMode === 'exam' ? "text-red-700 font-semibold" : "text-slate-600 group-hover:text-slate-900"
+                                    )}>
+                                        Final Exam
+                                    </span>
                                 </button>
                             </div>
 
                         </div>
-                    </ScrollArea>
+                    </div>
+
+                    {/* Sidebar Footer - Exit Button */}
+                    <div className="p-4 border-t border-slate-100 bg-white z-10">
+                        <Link to="/dashboard">
+                            <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg h-10 px-3 transition-colors font-medium text-sm">
+                                <LogOut className="h-4 w-4 mr-3" />
+                                Exit Course
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* =========================================================
                     MAIN CONTENT AREA (Solid Premium White)
                    ========================================================= */}
-                <div className="flex-1 bg-white rounded-3xl flex flex-col overflow-hidden relative shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                {/* =========================================================
+                    MAIN CONTENT AREA (Solid Premium White)
+                   ========================================================= */}
+                <div className="flex-1 bg-white rounded-2xl flex flex-col overflow-hidden relative shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
 
                     {/* --- VIEW: OVERVIEW --- */}
                     {viewMode === 'overview' && (
-                        <CourseOverview
-                            title={COURSE_CONTENT.title}
-                            description={COURSE_CONTENT.description}
-                            objectives={COURSE_CONTENT.objectives}
-                            syllabus={COURSE_CONTENT.syllabusOverview}
-                            onStartCourse={handleStartCourse}
-                        />
-                    )}
-
-                    {/* --- VIEW: FINAL EXAM --- */}
-                    {viewMode === 'exam' && (
-                        <ScrollArea className="flex-1 h-full">
-                            <div className="p-10">
-                                <FinalExam
-                                    title="Final Course Assessment"
-                                    description="This comprehensive exam covers First Impressions, Email Etiquette, Negotiation, and Presentation Skills. You have 60 minutes."
-                                    durationMinutes={60}
-                                    questions={COURSE_CONTENT.finalExam.questions}
-                                    passingScore={70}
-                                    onComplete={(score, passed) => console.log("Exam done", score, passed)}
+                        <ScrollArea key="overview" className="flex-1 bg-white">
+                            <div className="px-8 py-10 max-w-5xl mx-auto">
+                                <CourseOverview
+                                    title={COURSE_CONTENT.title}
+                                    description={COURSE_CONTENT.description}
+                                    objectives={COURSE_CONTENT.objectives}
+                                    syllabus={COURSE_CONTENT.syllabusOverview}
+                                    onStartCourse={handleStartCourse}
                                 />
                             </div>
                         </ScrollArea>
                     )}
 
+                    {/* --- VIEW: FINAL EXAM --- */}
+                    {viewMode === 'exam' && (
+                        COURSE_CONTENT.finalExam ? (
+                            <FinalExam
+                                title="Final Course Exam"
+                                description="Prove your mastery of the course material. This exam covers all modules and requires a passing score of 80%."
+                                durationMinutes={60}
+                                questions={COURSE_CONTENT.finalExam.questions}
+                                passingScore={70}
+                                onComplete={(score, passed) => {
+                                    console.log(`Exam completed. Score: ${score}, Passed: ${passed}`);
+                                    // TODO: Save progress logic here
+                                }}
+                            />
+                        ) : (
+                            <div className="flex-1 flex items-center justify-center text-slate-500">
+                                Exam content not found.
+                            </div>
+                        )
+                    )}
+
                     {/* --- VIEW: MODULE QUIZ --- */}
                     {viewMode === 'module-quiz' && currentModule?.quiz && (
-                        <ScrollArea className="flex-1 h-full">
-                            <div className="px-12 lg:px-20 py-12 max-w-4xl mx-auto">
+                        <ScrollArea key="quiz" className="flex-1 bg-white">
+                            <div className="px-8 py-16 max-w-4xl mx-auto">
                                 {/* Quiz Header */}
                                 <div className="mb-12 text-center">
-                                    <h1 className="text-4xl font-bold text-slate-900 mb-3">{currentModule.quiz.title}</h1>
-                                    <p className="text-lg text-slate-600">
-                                        Test your knowledge of {currentModule.title}
-                                    </p>
+                                    <div className="text-sm font-medium text-slate-400 mb-3 tracking-wide uppercase">
+                                        {currentModule.title}
+                                    </div>
+                                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+                                        {currentModule.quiz.title}
+                                    </h1>
+
+                                    <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+                                        <span className="flex items-center bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100 font-medium">
+                                            <Flag className="w-4 h-4 mr-2" />
+                                            Knowledge Check
+                                        </span>
+                                        <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                                            <HelpCircle className="w-4 h-4 mr-2 text-slate-400" />
+                                            {currentModule.quiz.questions.length} Questions
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {/* Quiz Content */}
-                                <QuizBlock
-                                    title={currentModule.quiz.title}
-                                    questions={currentModule.quiz.questions}
-                                    onComplete={(score) => console.log("Module Quiz completed with score:", score)}
-                                />
+                                <div className="mt-8">
+                                    <QuizBlock
+                                        title={currentModule.quiz.title}
+                                        questions={currentModule.quiz.questions}
+                                        onComplete={(score) => console.log("Module Quiz completed with score:", score)}
+                                    />
+                                </div>
                             </div>
                         </ScrollArea>
                     )}
@@ -284,12 +353,45 @@ export function CoursePage() {
                     {/* --- VIEW: LEARNING (LESSON) --- */}
                     {viewMode === 'learning' && (
                         <>
-                            {/* Lesson Header */}
-                            <div className="px-12 lg:px-20 py-8 bg-white border-b border-slate-100">
-                                <div className="max-w-4xl">
-                                    <h1 className="text-3xl font-bold text-slate-900 mb-3">{currentLesson?.title}</h1>
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="text-sm text-slate-500 flex items-center">
+                            <ScrollArea className="flex-1 bg-white">
+                                <div className="max-w-4xl mx-auto px-8 py-10">
+                                    {/* Chapter Header */}
+                                    <div className="mb-10 text-center">
+                                        <div className="text-sm font-medium text-slate-400 mb-3 tracking-wide uppercase">
+                                            {currentModule?.title}
+                                        </div>
+                                        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+                                            {currentLesson?.title}
+                                        </h1>
+
+                                        <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+                                            <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                                                <Clock className="w-4 h-4 mr-2 text-slate-400" />
+                                                {currentLesson?.duration || "20 min"}
+                                            </span>
+                                            <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                                                <Award className="w-4 h-4 mr-2 text-slate-400" />
+                                                {currentLesson?.difficulty || "Beginner"}
+                                            </span>
+                                            {currentLesson?.completed && (
+                                                <span className="flex items-center bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 font-medium">
+                                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                                    Completed
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Description/Intro */}
+                                    {currentLesson?.description && (
+                                        <div className="text-xl text-slate-600 leading-relaxed font-serif mb-12 border-l-4 border-primary/20 pl-6 italic">
+                                            {currentLesson.description}
+                                        </div>
+                                    )}
+
+                                    {/* Content Blocks */}
+                                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-10">
+                                        <span className="flex items-center">
                                             <Clock className="w-4 h-4 mr-1.5" />
                                             {currentLesson?.duration || "20 min"}
                                         </span>
@@ -305,16 +407,7 @@ export function CoursePage() {
                                             </>
                                         )}
                                     </div>
-                                    {currentLesson?.description && (
-                                        <p className="text-slate-600 leading-relaxed max-w-3xl">
-                                            {currentLesson.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
 
-                            <ScrollArea className="flex-1 bg-white">
-                                <div className="px-12 lg:px-20 py-12 space-y-10 pb-32 max-w-4xl mx-auto">
                                     {currentLesson?.blocks.map((block) => (
                                         <div key={block.id} className="space-y-4">
 
@@ -330,7 +423,7 @@ export function CoursePage() {
 
                                             {/* MARKDOWN TEXT BLOCK */}
                                             {block.type === 'text' && (
-                                                <div className="prose prose-slate max-w-3xl 
+                                                <div className="prose prose-slate max-w-5xl 
                                                     prose-headings:font-bold prose-headings:text-slate-900 prose-headings:tracking-tight
                                                     prose-p:text-slate-800 prose-p:leading-7 prose-p:mb-5
                                                     prose-strong:text-slate-900 prose-strong:font-bold
@@ -440,33 +533,27 @@ export function CoursePage() {
                                             />
                                         </div>
                                     ))}
+                                    {/* Inline Navigation (Book Style) */}
+                                    <div className="mt-24 pt-10 border-t border-slate-100 flex items-center justify-between">
+                                        <button className="flex items-center gap-2 px-6 py-4 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all font-medium group text-lg">
+                                            <ChevronLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                                            Previous
+                                        </button>
+
+                                        <button
+                                            className="flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all font-bold text-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 group"
+                                            onClick={() => currentLesson && completeLesson(currentLesson.id)}
+                                        >
+                                            {currentLesson?.completed ? "Next Lesson" : "Complete & Continue"}
+                                            <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                        </button>
+                                    </div>
                                 </div>
                             </ScrollArea>
-
-                            {/* Navigation Footer */}
-                            <div className="bg-white border-t border-slate-100 px-12 lg:px-20 py-6 flex justify-between items-center">
-                                <button className="flex items-center gap-2 px-5 py-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium">
-                                    <ChevronLeft className="h-4 w-4" />
-                                    Previous
-                                </button>
-
-                                <div className="hidden md:flex items-center gap-2 text-sm">
-                                    <span className="text-slate-400">Module:</span>
-                                    <span className="text-slate-700 font-medium">{currentModule?.title}</span>
-                                </div>
-
-                                <button
-                                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium"
-                                    onClick={() => currentLesson && completeLesson(currentLesson.id)}
-                                >
-                                    {currentLesson?.completed ? "Next Lesson" : "Complete & Continue"}
-                                    <ChevronRight className="h-4 w-4" />
-                                </button>
-                            </div>
                         </>
                     )}
                 </div>
             </div>
-        </CourseLayout>
+        </CourseLayout >
     );
 }
