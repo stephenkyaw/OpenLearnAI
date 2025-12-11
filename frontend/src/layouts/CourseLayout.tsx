@@ -6,7 +6,7 @@ interface CourseLayoutProps {
 
 export function CourseLayout({ children }: CourseLayoutProps) {
     return (
-        <div className="min-h-screen flex flex-col font-sans selection:bg-primary/20">
+        <div className="min-h-screen flex flex-col font-sans selection:bg-primary/20 bg-background text-foreground">
             {/* Main Content Area - Full Screen Mode */}
             <main className="flex-1 overflow-hidden relative px-4 py-4 md:px-6 md:py-6">
                 {children}

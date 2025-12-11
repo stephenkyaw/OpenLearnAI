@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -50,13 +51,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     mobileOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
-                <div className="h-full glass rounded-3xl flex flex-col overflow-hidden border border-white/60 shadow-2xl bg-white/90 backdrop-blur-xl">
+                <div className="h-full rounded-none lg:rounded-3xl flex flex-col overflow-hidden border-r lg:border border-border/40 shadow-xl shadow-black/5 bg-card/80 backdrop-blur-xl">
                     {/* Header */}
-                    <div className="h-24 flex items-center px-8 border-b border-black/5">
-                        <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary mr-4 shadow-sm">
-                            <BookOpen className="h-6 w-6" />
+                    <div className="h-20 flex items-center px-6 border-b border-border/40">
+                        <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary mr-3 shadow-sm">
+                            <BookOpen className="h-5 w-5" />
                         </div>
-                        <span className="font-bold text-xl tracking-tight text-foreground">OpenLearn</span>
+                        <span className="font-bold text-lg tracking-tight text-foreground">OpenLearn</span>
                         <Button
                             variant="ghost"
                             size="icon"
@@ -89,7 +90,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </div>
 
                     {/* User Footer */}
-                    <div className="p-6 mt-auto border-t border-black/5 bg-white/40">
+                    <div className="p-6 mt-auto border-t border-border/50 bg-muted/20">
                         <div className="flex items-center space-x-3 mb-4 px-2">
                             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-md ring-2 ring-white">
                                 JD
@@ -134,6 +135,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
                         {/* Top Desktop Bar (Minimal - Notifications Only) */}
                         <div className="hidden lg:flex items-center justify-end px-6 py-4 gap-3">
+                            <ModeToggle />
                             <BellWithDropdown />
                             <Link to="/dashboard/profile">
                                 <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all">
@@ -195,11 +197,11 @@ function BellWithDropdown() {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 mt-3 w-96 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right border border-slate-200 bg-white">
-                        <div className="p-4 border-b border-slate-100">
+                    <div className="absolute right-0 mt-3 w-96 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right border border-border bg-popover text-popover-foreground">
+                        <div className="p-4 border-b border-border/50">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-bold text-base text-slate-900">Notifications</h3>
-                                <span className="text-xs bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full font-semibold border border-indigo-100">3 New</span>
+                                <h3 className="font-bold text-base text-foreground">Notifications</h3>
+                                <span className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-semibold border border-primary/20">3 New</span>
                             </div>
                         </div>
                         <div className="max-h-[400px] overflow-y-auto p-2">
@@ -207,29 +209,29 @@ function BellWithDropdown() {
                                 title="New Lesson Added"
                                 time="2m ago"
                                 desc="Advanced Negotiation Strategies is now available."
-                                color="text-blue-600"
-                                bgColor="bg-blue-50"
-                                borderColor="border-blue-200"
+                                color="text-blue-500 dark:text-blue-400"
+                                bgColor="bg-blue-500/10"
+                                borderColor="border-blue-500/20"
                             />
                             <NotificationItem
                                 title="Assignment Graded"
                                 time="1h ago"
                                 desc="Your essay on 'Business Etiquette' scored 95%."
-                                color="text-green-600"
-                                bgColor="bg-green-50"
-                                borderColor="border-green-200"
+                                color="text-green-500 dark:text-green-400"
+                                bgColor="bg-green-500/10"
+                                borderColor="border-green-500/20"
                             />
                             <NotificationItem
                                 title="System Alert"
                                 time="1d ago"
                                 desc="Scheduled maintenance on Saturday at 2:00 AM UTC."
-                                color="text-orange-600"
-                                bgColor="bg-orange-50"
-                                borderColor="border-orange-200"
+                                color="text-orange-500 dark:text-orange-400"
+                                bgColor="bg-orange-500/10"
+                                borderColor="border-orange-500/20"
                             />
                         </div>
-                        <div className="p-3 border-t border-slate-100 bg-slate-50">
-                            <Button variant="ghost" size="sm" className="w-full text-sm h-9 text-slate-700 font-medium hover:bg-white hover:text-slate-900">
+                        <div className="p-3 border-t border-border/50 bg-muted/30">
+                            <Button variant="ghost" size="sm" className="w-full text-sm h-9 text-muted-foreground font-medium hover:bg-muted/50 hover:text-foreground">
                                 Mark all as read
                             </Button>
                         </div>
@@ -245,9 +247,9 @@ function NotificationItem({ title, time, desc, color, bgColor, borderColor }: { 
         <div className={cn("p-3 rounded-xl transition-all cursor-pointer group mb-2 border", bgColor, borderColor, "hover:shadow-sm")}>
             <div className="flex justify-between items-start mb-1.5">
                 <span className={cn("font-semibold text-sm", color)}>{title}</span>
-                <span className="text-xs text-slate-500 font-medium">{time}</span>
+                <span className="text-xs text-muted-foreground font-medium">{time}</span>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed">{desc}</p>
+            <p className="text-xs text-muted-foreground/80 leading-relaxed">{desc}</p>
         </div>
     )
 }

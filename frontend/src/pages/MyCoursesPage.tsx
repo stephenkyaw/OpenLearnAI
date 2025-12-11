@@ -92,28 +92,28 @@ export function MyCoursesPage() {
 
             {/* Controls Section */}
             <div className="space-y-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border/50">
                     <div className="flex items-center gap-2 w-full md:w-auto">
                         <div className="relative flex-1 md:w-80">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search courses..."
-                                className="pl-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                                className="pl-10 bg-muted/50 border-input focus:bg-background transition-colors"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <Button variant="outline" size="icon" className="border-slate-200">
+                        <Button variant="outline" size="icon" className="border-input hover:bg-muted/50">
                             <Filter className="h-4 w-4" />
                         </Button>
                     </div>
 
-                    <div className="flex items-center gap-2 border-l pl-4 border-slate-100">
+                    <div className="flex items-center gap-2 border-l pl-4 border-border/50">
                         <Button
                             variant={viewMode === 'grid' ? "secondary" : "ghost"}
                             size="icon"
                             onClick={() => setViewMode('grid')}
-                            className={viewMode === 'grid' ? "bg-slate-100 text-slate-900" : "text-muted-foreground"}
+                            className={viewMode === 'grid' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50"}
                         >
                             <LayoutGrid className="h-4 w-4" />
                         </Button>
@@ -121,7 +121,7 @@ export function MyCoursesPage() {
                             variant={viewMode === 'list' ? "secondary" : "ghost"}
                             size="icon"
                             onClick={() => setViewMode('list')}
-                            className={viewMode === 'list' ? "bg-slate-100 text-slate-900" : "text-muted-foreground"}
+                            className={viewMode === 'list' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50"}
                         >
                             <ListIcon className="h-4 w-4" />
                         </Button>
@@ -132,25 +132,25 @@ export function MyCoursesPage() {
                     <TabsList className="mb-6 bg-transparent p-0 gap-4">
                         <TabsTrigger
                             value="all"
-                            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all"
+                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
                         >
                             All Courses
                         </TabsTrigger>
                         <TabsTrigger
                             value="active"
-                            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all"
+                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
                         >
                             In Progress
                         </TabsTrigger>
                         <TabsTrigger
                             value="completed"
-                            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all"
+                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
                         >
                             Completed
                         </TabsTrigger>
                         <TabsTrigger
                             value="generating"
-                            className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all"
+                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
                         >
                             Generating
                         </TabsTrigger>
@@ -169,9 +169,9 @@ export function MyCoursesPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center text-muted-foreground bg-white rounded-3xl border border-dashed border-slate-200">
-                                <BookOpen className="h-12 w-12 mx-auto mb-4 text-slate-200" />
-                                <h3 className="text-lg font-semibold text-slate-900">No courses found</h3>
+                            <div className="p-12 text-center text-muted-foreground bg-card rounded-3xl border border-dashed border-border/50">
+                                <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                                <h3 className="text-lg font-semibold text-foreground">No courses found</h3>
                                 <p>Try adjusting your search or filters.</p>
                             </div>
                         )}
@@ -184,7 +184,7 @@ export function MyCoursesPage() {
                                     size="icon"
                                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                     disabled={currentPage === 1}
-                                    className="rounded-full w-10 h-10 border-slate-200"
+                                    className="rounded-full w-10 h-10 border-input bg-card"
                                 >
                                     <ChevronLeft className="h-4 w-4" />
                                 </Button>
@@ -196,7 +196,7 @@ export function MyCoursesPage() {
                                     size="icon"
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                     disabled={currentPage === totalPages}
-                                    className="rounded-full w-10 h-10 border-slate-200"
+                                    className="rounded-full w-10 h-10 border-input bg-card"
                                 >
                                     <ChevronRight className="h-4 w-4" />
                                 </Button>
@@ -215,7 +215,7 @@ function CourseGridItem({ course }: { course: any }) {
     const Icon = getCategoryIcon(course.category);
 
     return (
-        <div className="bg-white rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-slate-100 hover:-translate-y-1 flex flex-col h-full">
+        <div className="bg-card rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-border/50 hover:-translate-y-1 flex flex-col h-full hover:border-primary/20">
             {/* Decorative Blur Blob */}
             <div className={cn("absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-50 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
 
@@ -225,22 +225,22 @@ function CourseGridItem({ course }: { course: any }) {
                         getCourseColor(course.iconColor))}>
                         <Icon className="h-7 w-7" />
                     </div>
-                    <span className="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-slate-600 shadow-sm border border-slate-100">
+                    <span className="bg-card/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground shadow-sm border border-border/50">
                         {course.category}
                     </span>
                 </div>
 
                 <div className="mb-4 flex-1">
-                    <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors leading-tight">
+                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-tight">
                         {course.title}
                     </h3>
-                    <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed font-medium">
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed font-medium">
                         {course.description}
                     </p>
                 </div>
 
                 <div className="space-y-5 mt-auto">
-                    <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
+                    <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground/80">
                         <div className="flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5" />
                             <span>{course.duration}</span>
@@ -253,12 +253,12 @@ function CourseGridItem({ course }: { course: any }) {
 
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-bold">
-                            <span className="text-slate-500">Progress</span>
+                            <span className="text-muted-foreground">Progress</span>
                             <span className="text-primary">{course.progress}%</span>
                         </div>
-                        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                                className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--primary),0.3)]"
                                 style={{ width: `${course.progress}%` }}
                             />
                         </div>
@@ -295,7 +295,7 @@ function CourseListItem({ course }: { course: any }) {
     const Icon = getCategoryIcon(course.category);
 
     return (
-        <div className="bg-white rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group hover:-translate-x-1 relative overflow-hidden">
+        <div className="bg-card rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-border/50 hover:shadow-xl transition-all duration-300 group hover:-translate-x-1 relative overflow-hidden hover:border-primary/20">
             {/* Decorative Blur Blob */}
             <div className={cn("absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-30 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
 
@@ -306,16 +306,16 @@ function CourseListItem({ course }: { course: any }) {
 
             <div className="flex-1 min-w-0 text-center sm:text-left relative z-10">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
-                    <h3 className="font-bold text-lg group-hover:text-primary transition-colors truncate text-slate-900">
+                    <h3 className="font-bold text-lg group-hover:text-primary transition-colors truncate text-foreground">
                         {course.title}
                     </h3>
-                    <span className="inline-block px-3 py-1 bg-slate-50 text-slate-600 border border-slate-100 text-[10px] font-bold uppercase tracking-wider rounded-full w-fit mx-auto sm:mx-0">
+                    <span className="inline-block px-3 py-1 bg-muted text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider rounded-full w-fit mx-auto sm:mx-0">
                         {course.category}
                     </span>
                 </div>
-                <p className="text-sm text-slate-500 mb-3 line-clamp-1">{course.description}</p>
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-1">{course.description}</p>
 
-                <div className="flex items-center justify-center sm:justify-start gap-6 text-xs text-slate-400 font-semibold mb-3">
+                <div className="flex items-center justify-center sm:justify-start gap-6 text-xs text-muted-foreground/80 font-semibold mb-3">
                     <span className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5" /> {course.duration}
                     </span>
@@ -325,9 +325,9 @@ function CourseListItem({ course }: { course: any }) {
                 </div>
 
                 <div className="flex items-center gap-4 max-w-sm mx-auto sm:mx-0">
-                    <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(37,99,235,0.3)]"
+                            className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.3)]"
                             style={{ width: `${course.progress}%` }}
                         />
                     </div>
@@ -335,11 +335,11 @@ function CourseListItem({ course }: { course: any }) {
                 </div>
             </div>
 
-            <div className="w-full sm:w-auto mt-2 sm:mt-0 pl-4 border-l border-slate-100 relative z-10">
+            <div className="w-full sm:w-auto mt-2 sm:mt-0 pl-4 border-l border-border/50 relative z-10">
                 <Link to={course.link} className={cn("block", course.status === 'generating' && "pointer-events-none")}>
                     <Button
                         disabled={course.status === 'generating'}
-                        className="w-full sm:w-40 rounded-xl shadow-md bg-white hover:bg-slate-50 text-primary border border-slate-200 h-10 font-bold tracking-wide disabled:opacity-70 disabled:grayscale">
+                        className="w-full sm:w-40 rounded-xl shadow-md bg-card hover:bg-muted text-primary border border-input h-10 font-bold tracking-wide disabled:opacity-70 disabled:grayscale">
                         {course.status === 'generating' ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Generating

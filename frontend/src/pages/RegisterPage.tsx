@@ -36,35 +36,35 @@ export function RegisterPage() {
         >
             <form onSubmit={handleRegister} className="space-y-5">
                 <div className="space-y-2">
-                    <Label htmlFor="name" className="text-slate-700 font-semibold">Full Name</Label>
+                    <Label htmlFor="name" className="text-foreground font-semibold">Full Name</Label>
                     <Input
                         id="name"
                         placeholder="John Doe"
                         required
-                        className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 transition-all"
+                        className="h-12 rounded-xl bg-muted/50 border-input focus:bg-background transition-all shadow-sm"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="email" className="text-slate-700 font-semibold">Email</Label>
+                    <Label htmlFor="email" className="text-foreground font-semibold">Email</Label>
                     <Input
                         id="email"
                         type="email"
                         placeholder="m@example.com"
                         required
-                        className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 transition-all"
+                        className="h-12 rounded-xl bg-muted/50 border-input focus:bg-background transition-all shadow-sm"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="password" className="text-slate-700 font-semibold">Password</Label>
+                    <Label htmlFor="password" className="text-foreground font-semibold">Password</Label>
                     <Input
                         id="password"
                         type="password"
                         required
-                        className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:bg-white focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 transition-all"
+                        className="h-12 rounded-xl bg-muted/50 border-input focus:bg-background transition-all shadow-sm"
                     />
                 </div>
                 <Button
-                    className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold shadow-lg shadow-indigo-200"
+                    className="w-full h-12 rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 text-base font-semibold"
                     type="submit"
                     disabled={loading}
                 >
@@ -74,10 +74,10 @@ export function RegisterPage() {
 
             <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-slate-200" />
+                    <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-slate-500 font-medium">
+                    <span className="bg-card px-2 text-muted-foreground font-medium">
                         Or continue with
                     </span>
                 </div>
@@ -89,7 +89,7 @@ export function RegisterPage() {
                     type="button"
                     disabled={loading}
                     onClick={handleSocialLogin}
-                    className="h-11 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                    className="h-11 rounded-xl bg-transparent hover:bg-muted transition-all duration-200 border-border"
                 >
                     <Github className="mr-2 h-4 w-4" />
                     GitHub
@@ -99,7 +99,7 @@ export function RegisterPage() {
                     type="button"
                     disabled={loading}
                     onClick={handleSocialLogin}
-                    className="h-11 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                    className="h-11 rounded-xl bg-transparent hover:bg-muted transition-all duration-200 border-border"
                 >
                     <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
                         <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
@@ -107,9 +107,9 @@ export function RegisterPage() {
                     Google
                 </Button>
             </div>
-            <div className="text-center text-sm text-slate-600">
+            <div className="text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
+                <Link to="/login" className="text-primary hover:text-primary/80 font-semibold">
                     Sign in
                 </Link>
             </div>

@@ -65,7 +65,7 @@ export function LibraryPage() {
             <div className="max-w-6xl pb-10">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 px-2">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Document Library</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Document Library</h1>
                         <p className="text-muted-foreground mt-1">
                             Manage your source materials and track their usage across courses.
                         </p>
@@ -77,28 +77,28 @@ export function LibraryPage() {
 
                 {/* Controls Section */}
                 <div className="space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border/50">
                         <div className="flex items-center gap-2 w-full md:w-auto">
                             <div className="relative flex-1 md:w-80">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     placeholder="Search documents..."
-                                    className="pl-10 h-10 bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-xl"
+                                    className="pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors rounded-xl"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
-                            <Button variant="outline" size="icon" className="border-slate-200 rounded-xl">
+                            <Button variant="outline" size="icon" className="border-input rounded-xl bg-transparent hover:bg-muted/50">
                                 <Filter className="h-4 w-4" />
                             </Button>
                         </div>
 
-                        <div className="flex items-center gap-2 border-l pl-4 border-slate-100">
+                        <div className="flex items-center gap-2 border-l pl-4 border-border/50">
                             <Button
                                 variant={viewMode === 'grid' ? "secondary" : "ghost"}
                                 size="icon"
                                 onClick={() => setViewMode('grid')}
-                                className={cn("rounded-lg", viewMode === 'grid' ? "bg-slate-100 text-slate-900" : "text-muted-foreground")}
+                                className={cn("rounded-lg", viewMode === 'grid' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
                             >
                                 <LayoutGrid className="h-4 w-4" />
                             </Button>
@@ -106,7 +106,7 @@ export function LibraryPage() {
                                 variant={viewMode === 'list' ? "secondary" : "ghost"}
                                 size="icon"
                                 onClick={() => setViewMode('list')}
-                                className={cn("rounded-lg", viewMode === 'list' ? "bg-slate-100 text-slate-900" : "text-muted-foreground")}
+                                className={cn("rounded-lg", viewMode === 'list' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
                             >
                                 <ListIcon className="h-4 w-4" />
                             </Button>
@@ -115,13 +115,13 @@ export function LibraryPage() {
 
                     <Tabs defaultValue="all" className="w-full" onValueChange={(val) => { setCurrentTab(val); setCurrentPage(1); }}>
                         <TabsList className="mb-6 bg-transparent p-0 gap-4">
-                            <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all">
+                            <TabsTrigger value="all" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
                                 All Documents
                             </TabsTrigger>
-                            <TabsTrigger value="linked" className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all">
+                            <TabsTrigger value="linked" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
                                 Linked
                             </TabsTrigger>
-                            <TabsTrigger value="unlinked" className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border-slate-200 border border-transparent rounded-full px-6 transition-all">
+                            <TabsTrigger value="unlinked" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
                                 Unused
                             </TabsTrigger>
                         </TabsList>
@@ -139,9 +139,9 @@ export function LibraryPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="p-12 text-center text-muted-foreground bg-white rounded-3xl border border-dashed border-slate-200">
-                                    <File className="h-12 w-12 mx-auto mb-4 text-slate-200" />
-                                    <h3 className="text-lg font-semibold text-slate-900">No documents found</h3>
+                                <div className="p-12 text-center text-muted-foreground bg-card rounded-3xl border border-dashed border-border">
+                                    <File className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                                    <h3 className="text-lg font-semibold text-foreground">No documents found</h3>
                                     <p>Try adjusting your search or filters.</p>
                                 </div>
                             )}
@@ -154,7 +154,7 @@ export function LibraryPage() {
                                         size="icon"
                                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                         disabled={currentPage === 1}
-                                        className="rounded-full w-10 h-10 border-slate-200"
+                                        className="rounded-full w-10 h-10 border-input bg-card hover:bg-muted"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                     </Button>
@@ -166,7 +166,7 @@ export function LibraryPage() {
                                         size="icon"
                                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                         disabled={currentPage === totalPages}
-                                        className="rounded-full w-10 h-10 border-slate-200"
+                                        className="rounded-full w-10 h-10 border-input bg-card hover:bg-muted"
                                     >
                                         <ChevronRight className="h-4 w-4" />
                                     </Button>
@@ -184,7 +184,7 @@ function DocumentGridItem({ doc }: { doc: any }) {
     const { icon: Icon, color, bg } = getFileIcon(doc.type);
 
     return (
-        <div className="bg-white rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-slate-100 hover:-translate-y-1 flex flex-col h-full cursor-pointer">
+        <div className="bg-card rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-border/50 hover:-translate-y-1 flex flex-col h-full cursor-pointer hover:border-primary/20">
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
                     <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105", bg, color)}>
@@ -193,7 +193,7 @@ function DocumentGridItem({ doc }: { doc: any }) {
                     {doc.linkedCourses.length > 0 && (
                         <div className="flex -space-x-2">
                             {doc.linkedCourses.slice(0, 3).map((_: any, i: number) => (
-                                <div key={i} className="h-6 w-6 rounded-full bg-slate-100 border border-white flex items-center justify-center text-[8px] font-bold text-slate-500 shadow-sm">
+                                <div key={i} className="h-6 w-6 rounded-full bg-muted border border-card flex items-center justify-center text-[8px] font-bold text-muted-foreground shadow-sm">
                                     <BookOpen className="h-3 w-3" />
                                 </div>
                             ))}
@@ -202,32 +202,32 @@ function DocumentGridItem({ doc }: { doc: any }) {
                 </div>
 
                 <div className="mb-4 flex-1">
-                    <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-primary transition-colors truncate">
+                    <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors truncate">
                         {doc.name}
                     </h3>
-                    <div className="flex items-center text-xs text-slate-500 font-medium gap-2">
+                    <div className="flex items-center text-xs text-muted-foreground font-medium gap-2">
                         <span className="uppercase">{doc.type}</span>
-                        <span className="w-1 h-1 rounded-full bg-slate-300" />
+                        <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                         <span>{doc.size}</span>
                     </div>
                 </div>
 
                 <div className="mt-auto space-y-4">
                     {doc.linkedCourses.length > 0 ? (
-                        <div className="text-xs text-slate-500">
-                            Used in <span className="font-semibold text-slate-900">{doc.linkedCourses.length} courses</span>
+                        <div className="text-xs text-muted-foreground/80">
+                            Used in <span className="font-semibold text-foreground">{doc.linkedCourses.length} courses</span>
                         </div>
                     ) : (
-                        <div className="text-xs text-slate-400 italic">Unused</div>
+                        <div className="text-xs text-muted-foreground/50 italic">Unused</div>
                     )}
 
-                    <div className="flex items-center justify-between border-t border-slate-50 pt-4">
-                        <span className="text-xs text-slate-400 font-medium">{doc.date}</span>
+                    <div className="flex items-center justify-between border-t border-border/50 pt-4">
+                        <span className="text-xs text-muted-foreground font-medium">{doc.date}</span>
                         <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Preview">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Preview">
                                 <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download">
                                 <Download className="h-4 w-4" />
                             </Button>
                         </div>
@@ -242,42 +242,42 @@ function DocumentListItem({ doc }: { doc: any }) {
     const { icon: Icon, color, bg } = getFileIcon(doc.type);
 
     return (
-        <div className="bg-white rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group hover:-translate-x-1 cursor-pointer">
+        <div className="bg-card rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-border/50 hover:shadow-lg transition-all duration-300 group hover:-translate-x-1 cursor-pointer hover:border-primary/20">
             <div className={cn("h-16 w-16 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105", bg, color)}>
                 <Icon className="h-8 w-8" />
             </div>
 
             <div className="flex-1 min-w-0 text-center sm:text-left">
-                <h3 className="font-bold text-base text-slate-900 group-hover:text-primary transition-colors truncate mb-1">
+                <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors truncate mb-1">
                     {doc.name}
                 </h3>
-                <div className="flex items-center justify-center sm:justify-start text-xs text-slate-500 font-medium gap-2 mb-2">
+                <div className="flex items-center justify-center sm:justify-start text-xs text-muted-foreground font-medium gap-2 mb-2">
                     <span className="uppercase">{doc.type}</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                     <span>{doc.size}</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                     <span>{doc.date}</span>
                 </div>
 
                 {doc.linkedCourses.length > 0 ? (
                     <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                         {doc.linkedCourses.map((course: string, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="bg-slate-50 border border-slate-100 text-slate-600 font-medium text-[10px] pl-1.5 hover:bg-white hover:shadow-sm transition-all">
-                                <BookOpen className="w-3 h-3 mr-1 text-indigo-500" />
+                            <Badge key={idx} variant="secondary" className="bg-muted/50 border border-border text-muted-foreground font-medium text-[10px] pl-1.5 hover:bg-card hover:shadow-sm transition-all">
+                                <BookOpen className="w-3 h-3 mr-1 text-primary" />
                                 {course}
                             </Badge>
                         ))}
                     </div>
                 ) : (
-                    <span className="text-xs text-slate-400 italic">Not used in any course</span>
+                    <span className="text-xs text-muted-foreground/50 italic">Not used in any course</span>
                 )}
             </div>
 
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-xl" title="Preview">
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl" title="Preview">
                     <Eye className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-xl" title="Download">
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl" title="Download">
                     <Download className="h-4 w-4" />
                 </Button>
             </div>

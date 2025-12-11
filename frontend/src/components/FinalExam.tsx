@@ -101,45 +101,45 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
     if (!started) {
         return (
-            <div className="flex-1 overflow-y-auto bg-white h-full">
+            <div className="flex-1 overflow-y-auto bg-card h-full">
                 <div className="px-8 py-16 max-w-4xl mx-auto">
                     <div className="text-center mb-16 space-y-6">
-                        <div className="inline-flex items-center justify-center p-4 rounded-full bg-red-50 text-red-600 mb-4 ring-1 ring-red-100">
+                        <div className="inline-flex items-center justify-center p-4 rounded-full bg-destructive/10 text-destructive mb-4 ring-1 ring-destructive/20">
                             <Award className="h-10 w-10" />
                         </div>
 
                         <div>
-                            <div className="text-sm font-medium text-slate-400 mb-3 tracking-wide uppercase">
+                            <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
                                 Final Assessment
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+                            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
                                 {title}
                             </h1>
-                            <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-serif italic">
+                            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-serif italic">
                                 "{description}"
                             </p>
                         </div>
 
-                        <div className="flex items-center justify-center gap-4 text-sm text-slate-500 pt-4">
-                            <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                <Clock className="w-4 h-4 mr-2 text-slate-400" />
+                        <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground pt-4">
+                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+                                <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
                                 {durationMinutes} Minutes
                             </span>
-                            <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                <AlertCircle className="w-4 h-4 mr-2 text-slate-400" />
+                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+                                <AlertCircle className="w-4 h-4 mr-2 text-muted-foreground" />
                                 {questions.length} Questions
                             </span>
-                            <span className="flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                                <CheckCircle className="w-4 h-4 mr-2 text-slate-400" />
+                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+                                <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
                                 {passingScore}% Passing
                             </span>
                         </div>
                     </div>
 
-                    <div className="max-w-xl mx-auto text-center border-t border-slate-100 pt-12">
-                        <p className="text-slate-500 mb-8">Ready to begin? The timer will start immediately.</p>
+                    <div className="max-w-xl mx-auto text-center border-t border-border/50 pt-12">
+                        <p className="text-muted-foreground mb-8">Ready to begin? The timer will start immediately.</p>
                         <button
-                            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white rounded-xl px-12 h-14 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-12 h-14 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
                             onClick={() => setStarted(true)}
                         >
                             Start Final Exam
@@ -153,26 +153,26 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
     if (finished) {
         const passed = score >= passingScore;
         return (
-            <div className="flex-1 overflow-y-auto bg-white h-full">
+            <div className="flex-1 overflow-y-auto bg-card h-full">
                 <div className="max-w-2xl mx-auto text-center space-y-8 pt-16 pb-20">
                     <div className={cn(
                         "w-24 h-24 rounded-full flex items-center justify-center mx-auto border-4",
-                        passed ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
+                        passed ? "bg-green-500/10 border-green-500/20" : "bg-destructive/10 border-destructive/20"
                     )}>
                         <span className={cn(
                             "text-3xl font-bold",
-                            passed ? "text-green-700" : "text-red-700"
+                            passed ? "text-green-600" : "text-destructive"
                         )}>{score}%</span>
                     </div>
                     <div>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-3">{passed ? "Congratulations!" : "Keep Practicing"}</h2>
-                        <p className="text-slate-600 text-base">
+                        <h2 className="text-3xl font-bold text-foreground mb-3">{passed ? "Congratulations!" : "Keep Practicing"}</h2>
+                        <p className="text-muted-foreground text-base">
                             {passed ? "You have successfully passed the final exam." : "You did not meet the passing score. Review the course material and try again."}
                         </p>
                     </div>
                     <div className="flex gap-4 justify-center mt-8">
                         <button
-                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
                             onClick={() => {
                                 setStarted(false);
                                 setFinished(false);
@@ -184,7 +184,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                             Retry Exam
                         </button>
                         <button
-                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
                             onClick={() => window.location.reload()}
                         >
                             Return to Course
@@ -196,17 +196,17 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
     }
 
     return (
-        <div className="flex-1 overflow-y-auto bg-white h-full">
+        <div className="flex-1 overflow-y-auto bg-card h-full">
             <div className="max-w-4xl mx-auto px-8 py-16">
                 {/* Sticky Header */}
-                <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-6 mb-12 flex justify-between items-center -mx-8 px-8 border-b border-slate-100/50">
+                <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-6 mb-12 flex justify-between items-center -mx-8 px-8 border-b border-border/50">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
-                        <p className="text-sm text-slate-500 mt-1">{questions.length} questions • {passingScore}% to pass</p>
+                        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+                        <p className="text-sm text-muted-foreground mt-1">{questions.length} questions • {passingScore}% to pass</p>
                     </div>
                     <div className={cn(
                         "flex items-center gap-2 px-4 py-2 rounded-lg font-medium",
-                        timeLeft < 60 ? "bg-red-50 text-red-700" : "bg-slate-100 text-slate-700"
+                        timeLeft < 60 ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-muted-foreground"
                     )}>
                         <Clock className="h-4 w-4" />
                         <span className="font-mono text-sm">{formatTime(timeLeft)}</span>
@@ -217,9 +217,9 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                     {questions.map((q, idx) => (
                         <div key={q.id} className="space-y-5">
                             <div className="flex gap-4">
-                                <span className="font-bold text-slate-400 flex-shrink-0 mt-1 text-base">{idx + 1}.</span>
+                                <span className="font-bold text-muted-foreground flex-shrink-0 mt-1 text-base">{idx + 1}.</span>
                                 <div className="flex-1 space-y-5">
-                                    <p className="text-slate-900 text-base leading-7">{q.text}</p>
+                                    <p className="text-foreground text-base leading-7">{q.text}</p>
 
                                     {/* MULTIPLE CHOICE */}
                                     {q.type === 'multiple-choice' && q.options && (
@@ -229,18 +229,21 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                                     key={optIdx}
                                                     onClick={() => handleAnswerChange(q.id, optIdx)}
                                                     className={cn(
-                                                        "flex items-start gap-3 py-2.5 px-3 rounded-md cursor-pointer transition-all",
-                                                        answers[q.id] === optIdx && "bg-indigo-50",
-                                                        answers[q.id] !== optIdx && "hover:bg-slate-50"
+                                                        "flex items-start gap-3 py-3 px-4 rounded-xl cursor-pointer transition-all border border-transparent",
+                                                        answers[q.id] === optIdx && "bg-primary/10 border-primary/20",
+                                                        answers[q.id] !== optIdx && "bg-muted/30 hover:bg-muted border-border/30"
                                                     )}
                                                 >
                                                     <div className={cn(
                                                         "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
-                                                        answers[q.id] === optIdx ? "border-indigo-600 bg-indigo-600" : "border-slate-300"
+                                                        answers[q.id] === optIdx ? "border-primary bg-primary" : "border-muted-foreground/30"
                                                     )}>
-                                                        {answers[q.id] === optIdx && <div className="w-2 h-2 bg-white rounded-full" />}
+                                                        {answers[q.id] === optIdx && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
                                                     </div>
-                                                    <span className="text-slate-800 text-sm leading-6">{opt}</span>
+                                                    <span className={cn(
+                                                        "text-sm leading-6",
+                                                        answers[q.id] === optIdx ? "text-foreground font-medium" : "text-muted-foreground"
+                                                    )}>{opt}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -254,16 +257,16 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
                                                 return (
                                                     <div key={pIdx} className="space-y-2">
-                                                        <div className="text-slate-900 text-sm font-medium">{pair.left}</div>
+                                                        <div className="text-foreground text-sm font-medium">{pair.left}</div>
                                                         <div className="flex flex-wrap gap-2">
                                                             {shuffledOptionsMap[q.id]?.map((opt, oIdx) => (
                                                                 <button
                                                                     key={oIdx}
                                                                     onClick={() => handleMatchingChange(q.id, pair.left, opt)}
                                                                     className={cn(
-                                                                        "px-4 py-2 text-sm rounded-md border transition-all",
-                                                                        currentSelection === opt && "bg-indigo-50 border-indigo-600 text-indigo-700",
-                                                                        currentSelection !== opt && "border-slate-200 text-slate-700 hover:bg-slate-50"
+                                                                        "px-4 py-2 text-sm rounded-lg border transition-all",
+                                                                        currentSelection === opt && "bg-primary/10 border-primary text-primary font-medium",
+                                                                        currentSelection !== opt && "border-border text-muted-foreground hover:bg-muted"
                                                                     )}
                                                                 >
                                                                     {opt}
@@ -282,14 +285,14 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                             placeholder={q.placeholder || "Type answer..."}
                                             value={answers[q.id] as string || ""}
                                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                                            className="max-w-md border-slate-200 focus:border-indigo-500 text-slate-900"
+                                            className="max-w-md border-input focus:border-primary text-foreground bg-background"
                                         />
                                     )}
 
                                     {/* WRITING */}
                                     {q.type === 'writing' && (
                                         <textarea
-                                            className="w-full min-h-[120px] p-3 rounded-md border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500"
+                                            className="w-full min-h-[120px] p-3 rounded-xl border border-input bg-background/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                             placeholder={q.placeholder || "Write here..."}
                                             value={answers[q.id] as string || ""}
                                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
@@ -298,39 +301,39 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
                                     {/* MULTIMEDIA */}
                                     {(q.type === 'audio' || q.type === 'video') && (
-                                        <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 flex flex-col items-center justify-center hover:border-slate-300 transition-colors">
+                                        <div className="border-2 border-dashed border-border/60 rounded-xl p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors bg-muted/10">
                                             {answers[q.id] ? (
                                                 <div className="text-center space-y-2">
                                                     <CheckCircle className="h-8 w-8 text-green-600 mx-auto" />
-                                                    <p className="font-medium text-sm text-slate-900">Response Recorded</p>
+                                                    <p className="font-medium text-sm text-foreground">Response Recorded</p>
                                                     <button
                                                         onClick={() => handleAnswerChange(q.id, "")}
-                                                        className="text-sm text-slate-600 hover:text-slate-900 underline"
+                                                        className="text-sm text-muted-foreground hover:text-destructive underline"
                                                     >
                                                         Remove
                                                     </button>
                                                 </div>
                                             ) : (
                                                 <div className="text-center space-y-4">
-                                                    <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center mx-auto">
+                                                    <div className="w-10 h-10 bg-muted/50 text-muted-foreground rounded-full flex items-center justify-center mx-auto">
                                                         {q.type === 'audio' ? <Mic className="h-5 w-5" /> : <VideoIcon className="h-5 w-5" />}
                                                     </div>
                                                     <div>
-                                                        <p className="font-medium text-sm text-slate-900">
+                                                        <p className="font-medium text-sm text-foreground">
                                                             {q.type === 'audio' ? "Record Audio" : "Record Video"}
                                                         </p>
-                                                        <p className="text-xs text-slate-500">Upload or record directly</p>
+                                                        <p className="text-xs text-muted-foreground">Upload or record directly</p>
                                                     </div>
                                                     <div className="flex gap-2">
                                                         <button
                                                             onClick={() => handleAnswerChange(q.id, "file.mp3")}
-                                                            className="px-4 py-2 text-sm border border-slate-200 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-2"
+                                                            className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
                                                         >
                                                             <UploadCloud className="h-4 w-4" /> Upload
                                                         </button>
                                                         <button
                                                             onClick={() => handleAnswerChange(q.id, "rec.mp3")}
-                                                            className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                                                            className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                                                         >
                                                             Record
                                                         </button>
@@ -348,7 +351,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                 {/* Submit Button */}
                 <div className="mt-16 flex justify-center pb-20">
                     <button
-                        className="px-10 py-4 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1"
+                        className="px-10 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1"
                         onClick={handleSubmit}
                         disabled={Object.keys(answers).length < questions.length}
                     >

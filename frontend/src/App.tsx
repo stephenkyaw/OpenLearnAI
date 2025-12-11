@@ -16,27 +16,30 @@ import { SettingsPage } from "@/pages/SettingsPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import { LibraryPage } from "@/pages/LibraryPage";
 import { MyCoursesPage } from "@/pages/MyCoursesPage";
+import { ThemeProvider } from "@/components/theme-provider";
 
 function App() {
   return (
-    <CourseProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<DashboardHome />} />
-          <Route path="/dashboard/upload" element={<CreateCoursePage />} />
-          <Route path="/dashboard/settings" element={<SettingsPage />} />
-          <Route path="/dashboard/profile" element={<ProfilePage />} />
-          <Route path="/dashboard/library" element={<LibraryPage />} />
-          <Route path="/dashboard/courses" element={<MyCoursesPage />} />
-          <Route path="/course/english" element={<CoursePage />} />
-          <Route path="/course/:courseId" element={<CoursePage />} />
-          <Route path="/dashboard/*" element={<DashboardHome />} />
-        </Routes>
-      </Router>
-    </CourseProvider>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <CourseProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<DashboardHome />} />
+            <Route path="/dashboard/upload" element={<CreateCoursePage />} />
+            <Route path="/dashboard/settings" element={<SettingsPage />} />
+            <Route path="/dashboard/profile" element={<ProfilePage />} />
+            <Route path="/dashboard/library" element={<LibraryPage />} />
+            <Route path="/dashboard/courses" element={<MyCoursesPage />} />
+            <Route path="/course/english" element={<CoursePage />} />
+            <Route path="/course/:courseId" element={<CoursePage />} />
+            <Route path="/dashboard/*" element={<DashboardHome />} />
+          </Routes>
+        </Router>
+      </CourseProvider>
+    </ThemeProvider>
   );
 }
 

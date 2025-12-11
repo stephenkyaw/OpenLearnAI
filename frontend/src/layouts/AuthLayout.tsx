@@ -13,23 +13,23 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         <div className="min-h-screen w-full bg-background p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header Logo */}
-                <div className="flex items-center space-x-2 mb-12">
-                    <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <BookOpen className="h-6 w-6 text-white" />
+                <div className="flex items-center space-x-2 mb-12 justify-center">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shadow-sm">
+                        <BookOpen className="h-6 w-6 text-primary" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-slate-900">OpenLearnAI</span>
+                    <span className="text-2xl font-bold tracking-tight text-foreground">OpenLearnAI</span>
                 </div>
 
                 {/* Centered Form Card */}
                 <div className="max-w-md mx-auto">
-                    <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-sm border border-slate-100 relative overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="bg-card rounded-3xl p-8 lg:p-10 shadow-xl shadow-black/5 border border-border/50 relative overflow-hidden backdrop-blur-sm">
                         {/* Decorative blur blob */}
-                        <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -mr-10 -mt-10 bg-indigo-50 opacity-50 pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -mr-10 -mt-10 bg-primary/10 opacity-50 pointer-events-none" />
 
                         <div className="relative z-10 space-y-6">
                             <div className="flex flex-col space-y-2 text-center">
-                                <h1 className="text-3xl font-bold tracking-tight text-slate-900">{title}</h1>
-                                <p className="text-sm text-slate-600">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+                                <p className="text-sm text-muted-foreground">
                                     {subtitle}
                                 </p>
                             </div>
