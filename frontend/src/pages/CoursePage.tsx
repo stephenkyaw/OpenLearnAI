@@ -1,7 +1,7 @@
 import { CourseLayout } from "@/layouts/CourseLayout";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Video, FileText, ImageIcon, Link as LinkIcon, ExternalLink, Award, Flag, Clock, Loader2, AlertCircle, LogOut, HelpCircle, Menu, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, PlayCircle, CheckCircle, Link as LinkIcon, ExternalLink, Award, Flag, Clock, Loader2, AlertCircle, LogOut, Menu, X, CheckCircle2, BookOpen, FileText, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Markdown from "react-markdown";
 import { cn } from "@/lib/utils";
@@ -42,9 +42,9 @@ export function CoursePage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="flex flex-col items-center space-y-4">
-                    <Loader2 className="h-12 w-12 text-indigo-600 animate-spin" />
-                    <p className="text-muted-foreground animate-pulse">Loading course content...</p>
+                <div className="flex flex-col items-center justify-center space-y-4">
+                    <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                    <p className="text-muted-foreground font-medium">Loading course...</p>
                 </div>
             </div>
         );
@@ -53,11 +53,10 @@ export function CoursePage() {
     if (error || !course) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="flex flex-col items-center space-y-4 text-center max-w-md">
-                    <AlertCircle className="h-12 w-12 text-red-500" />
+                <div className="text-center space-y-4">
+                    <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
                     <h3 className="text-xl font-bold">Unable to load course</h3>
-                    <p className="text-muted-foreground">{error || "Course data not available."}</p>
-                    <Button onClick={() => fetchCourse('english-101')} variant="outline">Retry</Button>
+                    <Button onClick={() => fetchCourse('english-101')}>Retry</Button>
                 </div>
             </div>
         );
@@ -66,84 +65,24 @@ export function CoursePage() {
     const COURSE_CONTENT = course;
 
     // 3. Helper to find current lesson data
-    const currentLesson = COURSE_CONTENT.modules
-        .flatMap(m => m.lessons)
-        .find(l => l.id === selectedLessonId);
+    const currentLesson = COURSE_CONTENT?.modules
+        ?.flatMap((m: any) => m.lessons || [])
+        .find((l: any) => l.id === selectedLessonId);
 
     // 4. Helper to find current selected module (for quiz)
-    const currentModule = COURSE_CONTENT.modules.find(m => m.id === selectedModuleId);
+    const currentModule = COURSE_CONTENT?.modules?.find((m: any) => m.id === selectedModuleId);
 
     const handleStartCourse = () => {
         setViewMode('learning');
     };
 
-
-
     return (
         <CourseLayout title={COURSE_CONTENT.title}>
-            <div className="flex flex-col md:flex-row h-[calc(100vh-3rem)] gap-4">
-
+            <div className="flex h-full w-full overflow-hidden">
                 {/* =========================================================
-                    MOBILE HEADER & TOGGLE
+                    SIDEBAR (DESKTOP) - FLUSH LEFT
                    ========================================================= */}
-                <div className="md:hidden flex items-center justify-between bg-card p-4 rounded-xl border border-border/50 mb-4 sticky top-0 z-30 shadow-sm">
-                    <span className="font-bold text-foreground truncate pr-4">{COURSE_CONTENT.title}</span>
-                    <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                    </Button>
-                </div>
-
-                {/* =========================================================
-                    MOBILE MENU OVERLAY (Side Sheet)
-                   ========================================================= */}
-                {isMobileMenuOpen && (
-                    <div className="md:hidden fixed inset-0 z-50 flex">
-                        {/* Backdrop */}
-                        <div
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        />
-
-                        {/* Drawer */}
-                        <div className="relative w-[85vw] max-w-[320px] bg-card h-full shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col border-r border-border">
-
-                            {/* Drawer Header */}
-                            <div className="flex items-center justify-between p-4 border-b border-border/50">
-                                <span className="font-bold text-lg text-foreground">Course Menu</span>
-                                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)} className="rounded-full hover:bg-muted">
-                                    <X className="h-5 w-5 text-muted-foreground" />
-                                </Button>
-                            </div>
-
-                            {/* Sidebar Content Reuse */}
-                            <div className="flex-1 overflow-y-auto">
-                                <SidebarContent
-                                    course={COURSE_CONTENT}
-                                    viewMode={viewMode}
-                                    setViewMode={(mode) => {
-                                        setViewMode(mode);
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    selectedLessonId={selectedLessonId}
-                                    setSelectedLessonId={(id) => {
-                                        setSelectedLessonId(id);
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                    selectedModuleId={selectedModuleId}
-                                    setSelectedModuleId={(id) => {
-                                        setSelectedModuleId(id);
-                                        setIsMobileMenuOpen(false);
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* =========================================================
-                    DESKTOP SIDEBAR (Managed)
-                   ========================================================= */}
-                <div className="w-80 flex-shrink-0 bg-card rounded-3xl hidden md:flex flex-col overflow-hidden h-full border border-border/50 shadow-sm">
+                <div className="hidden md:flex w-80 flex-col border-r border-border bg-muted/5 h-full">
                     <SidebarContent
                         course={COURSE_CONTENT}
                         viewMode={viewMode}
@@ -153,490 +92,391 @@ export function CoursePage() {
                         selectedModuleId={selectedModuleId}
                         setSelectedModuleId={setSelectedModuleId}
                     />
-
                 </div>
 
                 {/* =========================================================
-                    MAIN CONTENT AREA (Solid Premium White)
+                    MOBILE MENU (DRAWER)
                    ========================================================= */}
-                <div className="flex-1 bg-card rounded-3xl flex flex-col overflow-hidden relative border border-border/50 shadow-sm">
+                <div className="md:hidden absolute top-4 left-4 z-50">
+                    <Button variant="outline" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="bg-background shadow-md">
+                        <Menu className="h-5 w-5" />
+                    </Button>
+                </div>
 
-                    {/* --- VIEW: OVERVIEW --- */}
-                    {viewMode === 'overview' && (
-                        <ScrollArea key="overview" className="flex-1 bg-card">
-                            <div className="px-6 py-8 max-w-5xl mx-auto">
-                                <CourseOverview
-                                    title={COURSE_CONTENT.title}
-                                    description={COURSE_CONTENT.description}
-                                    objectives={COURSE_CONTENT.objectives}
-                                    syllabus={COURSE_CONTENT.syllabusOverview}
-                                    onStartCourse={handleStartCourse}
+                {isMobileMenuOpen && (
+                    <div className="md:hidden fixed inset-0 z-50 flex">
+                        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+                        <div className="relative w-[300px] bg-background h-full shadow-2xl flex flex-col border-r border-border animate-in slide-in-from-left">
+                            <div className="p-4 flex items-center justify-between border-b border-border/50">
+                                <span className="font-bold">Course Menu</span>
+                                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <X className="h-5 w-5" />
+                                </Button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto">
+                                <SidebarContent
+                                    course={COURSE_CONTENT}
+                                    viewMode={viewMode}
+                                    setViewMode={(m) => { setViewMode(m); setIsMobileMenuOpen(false); }}
+                                    selectedLessonId={selectedLessonId}
+                                    setSelectedLessonId={(id) => { setSelectedLessonId(id); setIsMobileMenuOpen(false); }}
+                                    selectedModuleId={selectedModuleId}
+                                    setSelectedModuleId={(id) => { setSelectedModuleId(id); setIsMobileMenuOpen(false); }}
                                 />
                             </div>
-                        </ScrollArea>
-                    )}
+                        </div>
+                    </div>
+                )}
 
-                    {/* --- VIEW: FINAL EXAM --- */}
-                    {viewMode === 'exam' && (
-                        COURSE_CONTENT.finalExam ? (
-                            <FinalExam
-                                title="Final Course Exam"
-                                description="Prove your mastery of the course material. This exam covers all modules and requires a passing score of 80%."
-                                durationMinutes={60}
-                                questions={COURSE_CONTENT.finalExam.questions}
-                                passingScore={70}
-                                onComplete={(score, passed) => {
-                                    console.log(`Exam completed. Score: ${score}, Passed: ${passed}`);
-                                    // TODO: Save progress logic here
-                                }}
-                            />
-                        ) : (
-                            <div className="flex items-center justify-center text-muted-foreground">
-                                Exam content not found.
+                {/* =========================================================
+                    MAIN CONTENT AREA - FLUSH RIGHT
+                   ========================================================= */}
+                <div className="flex-1 flex flex-col h-full overflow-hidden bg-muted/10 relative">
+
+                    {/* SCROLLABLE AREA CONTAINER */}
+                    <div className="flex-1 overflow-y-auto scroll-smooth p-6 pb-40">
+
+                        {/* --- VIEW: OVERVIEW --- */}
+                        {viewMode === 'overview' && (
+                            <div className="max-w-7xl mx-auto animate-fade-in">
+                                <Card className="shadow-sm border-border/60 bg-card min-h-[85vh]">
+                                    <CourseOverview
+                                        title={COURSE_CONTENT.title}
+                                        description={COURSE_CONTENT.description}
+                                        objectives={COURSE_CONTENT.objectives}
+                                        syllabus={COURSE_CONTENT.modules.map(m => ({
+                                            title: m.title,
+                                            description: `${m.lessons.length} Lessons • ${m.quiz ? 'Includes Assessment' : 'Practice Exercises'}`,
+                                            duration: "1 Week"
+                                        }))}
+                                        onStartCourse={handleStartCourse}
+                                    />
+                                </Card>
                             </div>
-                        )
-                    )}
+                        )}
 
-                    {/* --- VIEW: MODULE QUIZ --- */}
-                    {viewMode === 'module-quiz' && currentModule?.quiz && (
-                        <ScrollArea key="quiz" className="flex-1 bg-card">
-                            <div className="px-6 py-8 max-w-4xl mx-auto">
-                                {/* Quiz Header */}
-                                <div className="mb-12 text-center">
-                                    <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
-                                        {currentModule.title}
+                        {/* --- VIEW: FINAL EXAM --- */}
+                        {viewMode === 'exam' && (
+                            <div className="max-w-5xl mx-auto animate-fade-in">
+                                <Card className="shadow-sm border-border/60 bg-card min-h-[85vh] p-8">
+                                    {COURSE_CONTENT.finalExam ? (
+                                        <FinalExam
+                                            title="Final Course Exam"
+                                            description="Prove your mastery. Passing score: 80%."
+                                            durationMinutes={60}
+                                            questions={COURSE_CONTENT.finalExam.questions}
+                                            passingScore={70}
+                                            onComplete={(score, passed) => {
+                                                console.log(`Exam completed. Score: ${score}, Passed: ${passed}`);
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="p-12 text-center text-muted-foreground">No Exam Configured.</div>
+                                    )}
+                                </Card>
+                            </div>
+                        )}
+
+                        {/* --- VIEW: MODULE QUIZ --- */}
+                        {viewMode === 'module-quiz' && currentModule?.quiz && (
+                            <div className="max-w-5xl mx-auto animate-fade-in">
+                                <Card className="shadow-sm border-border/60 bg-card min-h-[85vh] p-8">
+                                    <div className="mb-10 text-center pb-8">
+                                        <h1 className="text-3xl font-bold tracking-tight mb-2">{currentModule.quiz.title}</h1>
+                                        <p className="text-muted-foreground">Module Assessment • {currentModule.quiz.questions.length} Questions</p>
                                     </div>
-                                    <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
-                                        {currentModule.quiz.title}
-                                    </h1>
-
-                                    <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                                        <span className="flex items-center bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20 font-medium">
-                                            <Flag className="w-4 h-4 mr-2" />
-                                            Knowledge Check
-                                        </span>
-                                        <span className="flex items-center bg-muted px-3 py-1 rounded-full border border-border">
-                                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                                            {currentModule.quiz.questions.length} Questions
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Quiz Content */}
-                                <div className="mt-8">
                                     <QuizBlock
                                         title={currentModule.quiz.title}
                                         questions={currentModule.quiz.questions}
-                                        onComplete={(score) => console.log("Module Quiz completed with score:", score)}
+                                        isEmbedded={true}
+                                        onComplete={(score) => console.log("Quiz done:", score)}
                                     />
-                                </div>
+                                </Card>
                             </div>
-                        </ScrollArea>
-                    )}
+                        )}
 
-                    {/* --- VIEW: LEARNING (LESSON) --- */}
-                    {viewMode === 'learning' && (
-                        <>
-                            <ScrollArea className="flex-1 bg-card">
-                                <div className="max-w-4xl mx-auto px-6 py-8">
-                                    {/* Chapter Header */}
-                                    <div className="mb-8 text-center">
-                                        <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
-                                            {currentModule?.title}
+                        {/* --- VIEW: LEARNING (LESSON) --- */}
+                        {viewMode === 'learning' && (
+                            <div className="max-w-6xl mx-auto animate-fade-in">
+                                <Card className="shadow-sm border-border/60 bg-card min-h-[85vh] p-8 md:p-12 relative overflow-hidden">
+                                    {/* Subtle top accents similar to Dashboard */}
+                                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+
+                                    {/* LESSON HEADER (NO DIVIDERS) */}
+                                    <div className="mb-12 relative z-10">
+                                        <div className="flex items-center gap-3 mb-6 text-sm font-semibold tracking-wide uppercase text-muted-foreground">
+                                            <span className="text-primary flex items-center gap-2">
+                                                <BookOpen className="h-4 w-4" />
+                                                {currentModule?.title}
+                                            </span>
+                                            <span className="text-border mx-2">•</span>
+                                            <span>Lesson {currentLesson?.id.split('-').pop()}</span>
                                         </div>
-                                        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
+
+                                        <h1 className="text-3xl md:text-5xl font-bold text-foreground leading-tight tracking-tight max-w-4xl mb-6">
                                             {currentLesson?.title}
                                         </h1>
 
-                                        <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                                            <span className="flex items-center bg-muted px-3 py-1 rounded-full border border-border">
-                                                <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
-                                                {currentLesson?.duration || "20 min"}
-                                            </span>
-                                            <span className="flex items-center bg-muted px-3 py-1 rounded-full border border-border">
-                                                <Award className="w-4 h-4 mr-2 text-muted-foreground" />
-                                                {currentLesson?.difficulty || "Beginner"}
-                                            </span>
+                                        <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground">
                                             {currentLesson?.completed && (
-                                                <span className="flex items-center bg-emerald-500/10 text-emerald-600 px-3 py-1 rounded-full border border-emerald-500/20 font-medium">
-                                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                                    Completed
+                                                <span className="text-emerald-600 flex items-center gap-2">
+                                                    <CheckCircle2 className="w-5 h-5" /> Completed
                                                 </span>
                                             )}
+                                            <span className="flex items-center gap-2">
+                                                <Clock className="w-4 h-4" /> {currentLesson?.duration || "20 min"}
+                                            </span>
+                                            <span className="flex items-center gap-2">
+                                                <Award className="w-4 h-4" /> {currentLesson?.difficulty || "Beginner"}
+                                            </span>
                                         </div>
-                                    </div>
 
-                                    {/* Description/Intro */}
-                                    {currentLesson?.description && (
-                                        <div className="text-xl text-muted-foreground leading-relaxed font-serif mb-8 border-l-4 border-primary/20 pl-6 italic">
-                                            {currentLesson.description}
-                                        </div>
-                                    )}
-
-                                    {/* Content Blocks */}
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-10">
-                                        <span className="flex items-center">
-                                            <Clock className="w-4 h-4 mr-1.5" />
-                                            {currentLesson?.duration || "20 min"}
-                                        </span>
-                                        <span className="text-border">•</span>
-                                        <span className="text-sm text-muted-foreground">{currentLesson?.difficulty || "Beginner"}</span>
-                                        {currentLesson?.completed && (
-                                            <>
-                                                <span className="text-border">•</span>
-                                                <span className="text-sm text-green-600 flex items-center font-medium">
-                                                    <CheckCircle className="w-4 h-4 mr-1.5" />
-                                                    Completed
-                                                </span>
-                                            </>
+                                        {/* DESCRIPTION */}
+                                        {currentLesson?.description && (
+                                            <div className="mt-8 text-lg text-muted-foreground leading-relaxed max-w-3xl">
+                                                {currentLesson.description}
+                                            </div>
                                         )}
                                     </div>
 
-                                    {currentLesson?.blocks.map((block) => (
-                                        <div key={block.id} className="space-y-4">
+                                    {/* BLOCKS */}
+                                    <div className="space-y-12 relative z-10 max-w-4xl">
+                                        {currentLesson?.blocks.map((block) => (
+                                            <div key={block.id} className="space-y-6">
+                                                {block.title && block.type !== 'quiz' && (
+                                                    <h3 className="text-2xl font-bold text-foreground">
+                                                        {block.title}
+                                                    </h3>
+                                                )}
 
-                                            {/* Render Title */}
-                                            {block.title && block.type !== 'quiz' && (
-                                                <h3 className="text-xl font-bold flex items-center text-foreground mt-8 first:mt-0">
-                                                    {block.type === 'video' || block.type === 'youtube' ? <Video className="h-6 w-6 mr-3 text-primary" /> : null}
-                                                    {block.type === 'image' ? <ImageIcon className="h-6 w-6 mr-3 text-purple-500" /> : null}
-                                                    {block.type === 'text' ? <FileText className="h-6 w-6 mr-3 text-primary" /> : null}
-                                                    {block.title}
-                                                </h3>
-                                            )}
-
-                                            {/* MARKDOWN TEXT BLOCK */}
-                                            {block.type === 'text' && (
-                                                <div className="prose prose-zinc dark:prose-invert max-w-5xl 
-                                                    prose-headings:font-bold prose-headings:tracking-tight
-                                                    prose-p:leading-7 prose-p:mb-5
-                                                    prose-strong:font-bold
-                                                    prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                                                    prose-ul:list-disc prose-ul:pl-5
-                                                    prose-img:rounded-xl prose-img:shadow-sm">
-                                                    <Markdown>{block.content}</Markdown>
-                                                </div>
-                                            )}
-
-                                            {/* IMAGE BLOCK */}
-                                            {block.type === 'image' && (
-                                                <div className="my-8">
-                                                    <img
-                                                        src={block.content}
-                                                        alt={block.title}
-                                                        className="w-full h-auto object-cover rounded-xl shadow-md"
-                                                    />
-                                                    {block.title && (
-                                                        <div className="mt-2 text-sm text-center text-muted-foreground italic">
-                                                            {block.title}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* YOUTUBE BLOCK */}
-                                            {block.type === 'youtube' && (
-                                                <div className="my-8 aspect-video w-full rounded-xl overflow-hidden bg-black shadow-lg">
-                                                    <iframe
-                                                        width="100%"
-                                                        height="100%"
-                                                        src={block.content}
-                                                        title={block.title || "Video"}
-                                                        frameBorder="0"
-                                                        className="w-full h-full"
-                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                        allowFullScreen
-                                                    />
-                                                </div>
-                                            )}
-
-                                            {/* NATIVE VIDEO BLOCK */}
-                                            {block.type === 'video' && (
-                                                <div className="my-8 rounded-xl overflow-hidden bg-black shadow-lg">
-                                                    <video
-                                                        controls
-                                                        className="w-full h-auto max-h-[500px]"
-                                                        src={block.content}
-                                                    >
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-
-                                    {/* External Learning Resources Section */}
-                                    {currentLesson?.resources && currentLesson.resources.length > 0 && (
-                                        <div className="mt-12">
-                                            <h3 className="text-lg font-bold mb-6 text-foreground">
-                                                Further Reading
-                                            </h3>
-                                            <div className="space-y-4">
-                                                {currentLesson.resources.map((res, idx) => (
-                                                    <div key={idx} className="group">
-                                                        <div className="flex items-start gap-3">
-                                                            <div className="mt-1 flex-shrink-0 text-muted-foreground">
-                                                                {res.type === 'video' ? <Video className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <a
-                                                                    href={res.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="font-medium text-foreground hover:text-primary transition-colors inline-flex items-center gap-2"
-                                                                >
-                                                                    {res.title}
-                                                                    <ExternalLink className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                                </a>
-                                                                {res.description && (
-                                                                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{res.description}</p>
-                                                                )}
-                                                                <a
-                                                                    href={res.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-xs text-primary hover:text-primary/80 mt-2 inline-block"
-                                                                >
-                                                                    Visit resource →
-                                                                </a>
-                                                            </div>
-                                                        </div>
+                                                {/* TEXT */}
+                                                {block.type === 'text' && (
+                                                    <div className="prose prose-zinc dark:prose-invert max-w-none prose-lg">
+                                                        <Markdown>{block.content}</Markdown>
                                                     </div>
+                                                )}
+
+                                                {/* IMAGE */}
+                                                {block.type === 'image' && (
+                                                    <figure className="my-8">
+                                                        <img
+                                                            src={block.content}
+                                                            alt={block.title}
+                                                            className="w-full h-auto rounded-2xl shadow-sm"
+                                                        />
+                                                        {block.title && (
+                                                            <figcaption className="mt-3 text-center text-sm font-medium text-muted-foreground">
+                                                                {block.title}
+                                                            </figcaption>
+                                                        )}
+                                                    </figure>
+                                                )}
+
+                                                {/* YOUTUBE */}
+                                                {block.type === 'youtube' && (
+                                                    <div className="aspect-video rounded-2xl overflow-hidden bg-black shadow-lg">
+                                                        <iframe width="100%" height="100%" src={block.content} title={block.title} frameBorder="0" allowFullScreen />
+                                                    </div>
+                                                )}
+
+                                                {/* QUIZ (Inline) */}
+                                                {block.type === 'quiz' && (
+                                                    <div className="my-12">
+                                                        <QuizBlock
+                                                            title={block.title || "Knowledge Check"}
+                                                            questions={block.content}
+                                                            isEmbedded={true}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* RESOURCES - CLEAN GRID */}
+                                    {currentLesson?.resources && currentLesson.resources.length > 0 && (
+                                        <div className="mt-20 relative z-10">
+                                            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
+                                                <ExternalLink className="w-4 h-4" /> Additional Resources
+                                            </h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {currentLesson.resources.map((res, i) => (
+                                                    <a
+                                                        key={i}
+                                                        href={res.url}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="group flex items-start gap-4 p-5 rounded-2xl border border-border/40 bg-secondary/5 hover:bg-secondary/20 hover:border-primary/20 transition-all duration-300"
+                                                    >
+                                                        <div className="flex-none h-12 w-12 rounded-xl bg-background border border-border/50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm">
+                                                            {res.url.includes('pdf') ? <FileText className="w-6 h-6" /> : <LinkIcon className="w-6 h-6" />}
+                                                        </div>
+                                                        <div className="flex-1 pt-1">
+                                                            <div className="font-bold text-foreground group-hover:text-primary transition-colors leading-tight mb-2 flex items-center gap-2">
+                                                                {res.title}
+                                                                <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                                                            </div>
+                                                            <div className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                                                {res.description}
+                                                            </div>
+                                                        </div>
+                                                    </a>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
+                                </Card>
+                            </div>
+                        )}
 
-                                    {/* Render all quiz blocks at the end */}
-                                    {currentLesson?.blocks.filter(block => block.type === 'quiz').map((block) => (
-                                        <div key={block.id} className="mt-16">
-                                            <QuizBlock
-                                                title={block.title || "Knowledge Check"}
-                                                questions={block.content}
-                                                onComplete={(score) => console.log("Formative Quiz completed:", score)}
-                                            />
-                                        </div>
-                                    ))}
-                                    {/* Inline Navigation (Book Style) */}
-                                    <div className="mt-16 pt-8 flex items-center justify-between">
-                                        <Button
-                                            variant="ghost"
-                                            className="h-10 px-4"
-                                        >
-                                            <ChevronLeft className="h-4 w-4 mr-2" />
-                                            Previous
-                                        </Button>
+                        {/* BOTTOM SPACER to ensure content isn't hidden by floating pill */}
+                        <div className="h-24" />
+                    </div>
 
-                                        <Button
-                                            onClick={() => currentLesson && completeLesson(currentLesson.id)}
-                                            className="h-10 px-6 shadow-lg shadow-primary/25"
-                                        >
-                                            {currentLesson?.completed ? "Next" : "Complete"}
-                                            <ChevronRight className="h-4 w-4 ml-2" />
-                                        </Button>
-                                    </div>
+                    {/* FLOATING NAVIGATION PILL (Only in learning mode) */}
+                    {viewMode === 'learning' && (
+                        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-500 w-full max-w-md px-4 pointer-events-none">
+                            <div className="pointer-events-auto bg-background/80 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-2xl rounded-full p-2 pl-2 flex items-center justify-between gap-3 ring-1 ring-black/5">
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="w-12 h-12 rounded-full hover:bg-foreground/5 text-foreground transition-all shrink-0"
+                                    title="Previous Lesson"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </Button>
+
+                                <div className="flex-1 text-center">
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block">Current Lesson</span>
+                                    <span className="text-sm font-bold text-foreground truncate block max-w-[150px] mx-auto">{currentLesson?.title?.split(':')[0]}</span>
                                 </div>
-                            </ScrollArea>
-                        </>
+
+                                <Button
+                                    onClick={() => currentLesson && completeLesson(currentLesson.id)}
+                                    size="lg"
+                                    className={cn(
+                                        "rounded-full h-12 px-6 text-sm font-bold shadow-lg transition-all hover:scale-105 shrink-0",
+                                        currentLesson?.completed
+                                            ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20"
+                                            : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-indigo-500/20"
+                                    )}
+                                >
+                                    {currentLesson?.completed ? "Next Lesson" : "Complete"}
+                                    {currentLesson?.completed ? <ChevronRight className="w-4 h-4 ml-2" /> : <CheckCircle className="w-4 h-4 ml-2" />}
+                                </Button>
+                            </div>
+                        </div>
                     )}
+
                 </div>
             </div>
-        </CourseLayout >
+        </CourseLayout>
     );
 }
 
-// =========================================================
-// SIDEBAR CONTENT COMPONENT
-// =========================================================
+// ----------------------------------------------------------------------
+// SIDEBAR (CLEAN VERSION)
+// ----------------------------------------------------------------------
 interface SidebarContentProps {
-    course: any; // Using any for simplicity as CourseData type is internal
-    viewMode: string;
+    course: any;
+    viewMode: 'overview' | 'learning' | 'module-quiz' | 'exam';
     setViewMode: (mode: 'overview' | 'learning' | 'module-quiz' | 'exam') => void;
-    selectedLessonId: string;
+    selectedLessonId: string | null | undefined;
     setSelectedLessonId: (id: string) => void;
-    selectedModuleId: string | null;
+    selectedModuleId: string | null | undefined;
     setSelectedModuleId: (id: string) => void;
 }
 
-function SidebarContent({
-    course,
-    viewMode,
-    setViewMode,
-    selectedLessonId,
-    setSelectedLessonId,
-    selectedModuleId,
-    setSelectedModuleId
-}: SidebarContentProps) {
-
+function SidebarContent({ course, viewMode, setViewMode, selectedLessonId, setSelectedLessonId, selectedModuleId, setSelectedModuleId }: SidebarContentProps) {
     return (
-        <>
-            {/* Sidebar Header */}
-            <div className="p-6 pb-4">
-                {/* Course Title - Clickable to Overview */}
-                <h2
-                    className="font-bold text-xl leading-snug mb-6 text-foreground cursor-pointer hover:text-primary transition-colors"
-                    onClick={() => setViewMode('overview')}
-                >
+        <div className="flex flex-col h-full bg-card/50">
+            {/* Header */}
+            <div className="p-6">
+                <h2 className="font-bold text-lg leading-tight mb-4 cursor-pointer hover:text-primary transition-colors" onClick={() => setViewMode('overview')}>
                     {course.title}
                 </h2>
-
-                {/* Progress Card */}
-                <div className="space-y-3 bg-muted/30 p-4 rounded-2xl border border-border/50">
-                    <div className="flex justify-between text-xs font-semibold text-muted-foreground">
-                        <span className="flex items-center"><Award className="h-3 w-3 mr-1.5 text-primary" /> Progress</span>
-                        <span className="text-foreground">{course.progress}%</span>
-                    </div>
-                    <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden border border-border/50">
-                        <div
-                            className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-sm"
-                            style={{ width: `${course.progress}%` }}
-                        />
-                    </div>
-                    {/* Stats Row */}
-                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                        <div className="text-center">
-                            <div className="text-xs font-bold text-foreground">{course.modules.length}</div>
-                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Modules</div>
-                        </div>
-                        <div className="h-6 w-px bg-border/30" />
-                        <div className="text-center">
-                            <div className="text-xs font-bold text-foreground">
-                                {course.modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0)}
-                            </div>
-                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Lessons</div>
-                        </div>
-                        <div className="h-6 w-px bg-border/30" />
-                        <div className="text-center">
-                            <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                {course.modules.reduce((acc: number, m: any) =>
-                                    acc + (m.lessons?.filter((l: any) => l.completed).length || 0), 0
-                                )}
-                            </div>
-                            <div className="text-[9px] text-muted-foreground uppercase tracking-wider">Done</div>
-                        </div>
-                    </div>
+                <div className="flex items-center gap-2 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Award className="w-3 h-3" /> Progress: {course.progress}%
+                </div>
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${course.progress}%` }} />
                 </div>
             </div>
 
-            {/* Sidebar Content (Modules List) */}
-            <div className="flex-1 overflow-y-auto px-6 py-6 min-h-0">
-                <div className="space-y-6">
-                    {course.modules.map((module: any, idx: number) => (
-                        <div key={idx}>
-                            {/* Module Header */}
-                            <div className="mb-3">
-                                <h3 className="text-[11px] font-bold text-foreground uppercase tracking-widest">
-                                    {module.title}
-                                </h3>
-                            </div>
-                            <div className="space-y-1">
-                                {/* LESSONS */}
-                                {module.lessons?.map((lesson: any) => {
-                                    const hasQuiz = lesson.blocks.some((b: any) => b.type === 'quiz');
-                                    const isSelected = viewMode === 'learning' && selectedLessonId === lesson.id;
-
-                                    return (
-                                        <div
-                                            key={lesson.id}
-                                            className={cn(
-                                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
-                                                isSelected
-                                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                                            )}
-                                            onClick={() => {
-                                                setViewMode('learning');
-                                                setSelectedLessonId(lesson.id);
-                                            }}
-                                        >
-                                            {/* Icon Status */}
-                                            <div className="shrink-0">
-                                                {lesson.completed ? (
-                                                    <CheckCircle className={cn("h-4 w-4", isSelected ? "text-white" : "text-emerald-500")} />
-                                                ) : (
-                                                    <PlayCircle className={cn("h-4 w-4", isSelected ? "text-white" : "")} />
-                                                )}
-                                            </div>
-
-                                            {/* Content */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="font-medium leading-snug truncate">
-                                                    {lesson.title}
-                                                </div>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className={cn("text-[10px]", isSelected ? "text-white/80" : "text-muted-foreground/70")}>
-                                                        {lesson.duration || "20m"}
-                                                    </span>
-                                                    {hasQuiz && (
-                                                        <>
-                                                            <span className={cn("text-[10px]", isSelected ? "text-white/60" : "text-muted-foreground/40")}>•</span>
-                                                            <span className={cn("text-[10px]", isSelected ? "text-white/80" : "text-muted-foreground/70")}>
-                                                                Quiz
-                                                            </span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
+            {/* List */}
+            <div className="flex-1 overflow-y-auto py-2 px-4 space-y-6">
+                {course?.modules?.map((module: any, idx: number) => (
+                    <div key={idx}>
+                        <div className="px-2 mb-2 text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70">
+                            Module {idx + 1}: {module.title}
+                        </div>
+                        <div className="space-y-1">
+                            {module.lessons?.map((lesson: any) => {
+                                const isSelected = viewMode === 'learning' && selectedLessonId === lesson.id;
+                                return (
+                                    <button
+                                        key={lesson.id}
+                                        onClick={() => { setViewMode('learning'); setSelectedLessonId(lesson.id); }}
+                                        className={cn(
+                                            "w-full flex items-center justify-start h-11 px-3 font-medium transition-all duration-300 rounded-xl text-sm",
+                                            isSelected
+                                                ? "bg-gradient-to-r from-primary to-violet-600 text-white shadow-glow hover:opacity-90"
+                                                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                        )}
+                                    >
+                                        <div className={cn("mr-3 h-5 w-5 flex items-center justify-center", isSelected ? "text-white" : "text-muted-foreground")}>
+                                            {lesson.completed
+                                                ? <CheckCircle className={cn("w-4 h-4", isSelected ? "text-white" : "text-emerald-500")} />
+                                                : <PlayCircle className="w-4 h-4" />
+                                            }
                                         </div>
-                                    );
-                                })}
+                                        <span className="truncate flex-1 text-left">{lesson.title}</span>
+                                    </button>
+                                );
+                            })}
 
-                                {/* MODULE QUIZ */}
-                                {module.quiz && (
-                                    <div className="mt-3">
-                                        <div
-                                            className={cn(
-                                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
-                                                viewMode === 'module-quiz' && selectedModuleId === module.id
-                                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                                            )}
-                                            onClick={() => {
-                                                setViewMode('module-quiz');
-                                                setSelectedModuleId(module.id);
-                                            }}
-                                        >
-                                            <CheckCircle className={cn("h-4 w-4", viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-white" : "")} />
-                                            <span className="font-medium flex-1">Module {idx + 1} Quiz</span>
-                                            <span className={cn(
-                                                "text-[10px] font-semibold",
-                                                viewMode === 'module-quiz' && selectedModuleId === module.id ? "text-white/80" : "text-muted-foreground/70"
-                                            )}>
-                                                {module.quiz.questions.length} Q
-                                            </span>
-                                        </div>
+                            {module.quiz && (
+                                <button
+                                    onClick={() => { setViewMode('module-quiz'); setSelectedModuleId(module.id); }}
+                                    className={cn(
+                                        "w-full flex items-center justify-start h-11 px-3 font-medium transition-all duration-300 rounded-xl text-sm",
+                                        viewMode === 'module-quiz' && selectedModuleId === module.id
+                                            ? "bg-gradient-to-r from-primary to-violet-600 text-white shadow-glow hover:opacity-90"
+                                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                    )}
+                                >
+                                    <div className={cn("mr-3 h-5 w-5 flex items-center justify-center", (viewMode === 'module-quiz' && selectedModuleId === module.id) ? "text-white" : "text-muted-foreground")}>
+                                        <Flag className="w-4 h-4" />
                                     </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-
-                    {/* Final Exam */}
-                    <div className="mt-4">
-                        <div
-                            className={cn(
-                                "group flex w-full items-center gap-3 p-3 text-sm transition-all duration-200 rounded-xl cursor-pointer",
-                                viewMode === 'exam'
-                                    ? "bg-primary text-white shadow-lg shadow-primary/25"
-                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                                    <span className="truncate flex-1 text-left">Module Quiz</span>
+                                </button>
                             )}
-                            onClick={() => setViewMode('exam')}
-                        >
-                            <Award className={cn("h-4 w-4", viewMode === 'exam' ? "text-white" : "")} />
-                            <span className="font-medium flex-1">Final Exam</span>
                         </div>
                     </div>
-
-                </div>
-
-                {/* Sidebar Footer - Exit Button */}
-                <div className="p-6">
-                    <Link to="/dashboard" className="flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-destructive transition-colors">
-                        <LogOut className="h-3.5 w-3.5" />
-                        <span>Exit Course</span>
-                    </Link>
-                </div>
+                ))}
             </div>
-        </>
+
+            {/* Footer */}
+            <div className="p-4 bg-muted/10">
+                <button
+                    onClick={() => setViewMode('exam')}
+                    className={cn(
+                        "flex items-center justify-center gap-2 w-full p-3 rounded-xl font-bold transition-all text-sm mb-3",
+                        viewMode === 'exam'
+                            ? "bg-primary text-primary-foreground shadow-glow"
+                            : "bg-background border border-border shadow-sm hover:border-primary/50"
+                    )}
+                >
+                    <Award className="w-4 h-4" /> Final Exam
+                </button>
+
+                <Link to="/dashboard">
+                    <button className="flex items-center justify-center gap-2 w-full p-2 text-xs font-medium text-muted-foreground hover:text-destructive transition-colors">
+                        <LogOut className="w-3 h-3" /> Exit Course
+                    </button>
+                </Link>
+            </div>
+        </div>
     );
 }

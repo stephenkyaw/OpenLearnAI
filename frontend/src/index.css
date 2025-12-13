@@ -4,32 +4,33 @@
 
 @layer base {
   :root {
-    /* Base: Zinc (Neutral, modern gray) */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Base: Zinc-50 (Premium Light Background) */
+    --background: 240 5% 98%;
+    --foreground: 240 10% 4%;
 
-    /* Card: White with slight tint */
+    /* Card: White */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 240 10% 4%;
 
+    /* Popover: White */
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 240 10% 4%;
 
-    /* Primary: Violet (Professional, Creative, Modern) */
-    /* HSL: 262.1 83.3% 57.8% (Violet-600) */
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Indigo-600 (Vibrant, Premium) */
+    /* HSL: 255, 90%, 60% approx -> Indigo 500/600 hybrid */
+    --primary: 250 85% 60%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary: Zinc-100 */
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
 
-    /* Muted: Zinc-100/200 */
+    /* Muted: Zinc-200 */
     --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted-foreground: 240 5% 45%;
 
-    /* Accent: Violet-50/100 for hovers/subtle backgrounds */
-    --accent: 240 4.8% 95.9%;
+    /* Accent: Indigo-50 */
+    --accent: 250 85% 97%;
     --accent-foreground: 240 5.9% 10%;
 
     /* Destructive: Red-500 */
@@ -39,9 +40,12 @@
     /* Border: Zinc-200 */
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 262.1 83.3% 57.8%;
 
-    --radius: 0.75rem; /* 12px for modern rounded feel */
+    /* Ring: Indigo-400/500 */
+    --ring: 250 85% 60%;
+
+    --radius: 0.75rem;
+    /* 12px default */
   }
 
   .dark {
@@ -49,15 +53,17 @@
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    /* Card: Zinc-900 */
+    --card: 240 10% 6%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    /* Popover: Zinc-900 */
+    --popover: 240 10% 6%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary: Violet-500 */
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Indigo-500 */
+    --primary: 250 85% 65%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary: Zinc-800 */
     --secondary: 240 3.7% 15.9%;
@@ -78,7 +84,7 @@
     /* Border: Zinc-800 */
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 250 85% 65%;
   }
 }
 
@@ -86,20 +92,32 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-/* Custom Scrollbar for Webkit */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50 transition-colors;
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+}
+
+/* Glassmorphism Utilities (Optional helpers) */
+.glass {
+  @apply bg-white/70 dark:bg-black/70 backdrop-blur-md border border-white/20 dark:border-white/10;
+}
+
+.glass-card {
+  @apply bg-white/50 dark:bg-zinc-900/50 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-lg;
 }

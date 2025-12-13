@@ -1,7 +1,10 @@
-import { CheckCircle, Clock, AlertCircle, Mic, Video as VideoIcon, UploadCloud, Award } from "lucide-react";
+import { CheckCircle, Mic, Video as VideoIcon, Award, PlayCircle, RefreshCw, ArrowLeft, Timer, HelpCircle, UploadCloud, Flag, Clock, ChevronLeft, Send, ArrowRight } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
 import type { Question } from "@/data/mockCourse";
 
 interface FinalExamProps {
@@ -13,16 +16,18 @@ interface FinalExamProps {
     onComplete: (score: number, passed: boolean) => void;
 }
 
+const QUESTIONS_PER_PAGE = 5;
+
 export function FinalExam({ title, description, durationMinutes, questions, passingScore, onComplete }: FinalExamProps) {
     const [started, setStarted] = useState(false);
     const [finished, setFinished] = useState(false);
     const [timeLeft, setTimeLeft] = useState(durationMinutes * 60);
-    // Answers are Record<qId, value>. 
-    // Value is string | number | Record<string, string> (for matching).
     const [answers, setAnswers] = useState<Record<string, any>>({});
     const [score, setScore] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
 
-    // Memoize shuffled options for matching questions
+    const totalPages = Math.ceil(questions.length / QUESTIONS_PER_PAGE);
+
     const shuffledOptionsMap = useMemo(() => {
         const map: Record<string, string[]> = {};
         questions.forEach(q => {
@@ -37,7 +42,6 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
     useEffect(() => {
         if (!started || finished) return;
-
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -48,8 +52,15 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                 return prev - 1;
             });
         }, 1000);
-
         return () => clearInterval(timer);
+    }, [started, finished]);
+
+    // Reset pagination when starting/restarting
+    useEffect(() => {
+        if (started && !finished) {
+            setCurrentPage(0);
+            window.scrollTo(0, 0);
+        }
     }, [started, finished]);
 
     const formatTime = (seconds: number) => {
@@ -88,7 +99,6 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                     if (allCorrect) correctCount++;
                 }
             } else {
-                // Manual/Subjective types assume correct if answered in this mock
                 if (val) correctCount++;
             }
         });
@@ -99,128 +109,232 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
         onComplete(finalScore, finalScore >= passingScore);
     };
 
+    const goNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(prev => prev + 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const goPrevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(prev => prev - 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    // Calculate Progress for Circle
+    const answeredCount = Object.keys(answers).length;
+    const progressPercentage = (answeredCount / questions.length) * 100;
+    const circleRadius = 18;
+    const circleCircumference = 2 * Math.PI * circleRadius;
+    const strokeDashoffset = circleCircumference - (progressPercentage / 100) * circleCircumference;
+
+    // Get current page questions
+    const currentQuestions = questions.slice(currentPage * QUESTIONS_PER_PAGE, (currentPage + 1) * QUESTIONS_PER_PAGE);
+
+    // ------------------------------------------------------------------------
+    // RENDER: NOT STARTED (Hero Card)
+    // ------------------------------------------------------------------------
     if (!started) {
         return (
-            <div className="flex-1 overflow-y-auto bg-card h-full">
-                <div className="px-8 py-16 max-w-4xl mx-auto">
-                    <div className="text-center mb-16 space-y-6">
-                        <div className="inline-flex items-center justify-center p-4 rounded-full bg-destructive/10 text-destructive mb-4 ring-1 ring-destructive/20">
-                            <Award className="h-10 w-10" />
-                        </div>
+            <div className="flex-1 flex flex-col items-center justify-center py-12 animate-fade-in relative z-10">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
 
-                        <div>
-                            <div className="text-sm font-medium text-muted-foreground mb-3 tracking-wide uppercase">
-                                Final Assessment
-                            </div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
-                                {title}
-                            </h1>
-                            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-serif italic">
-                                "{description}"
-                            </p>
-                        </div>
+                <div className="max-w-2xl w-full text-center space-y-10 relative z-10 px-4">
+                    <div className="inline-flex p-6 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 text-primary mb-2 shadow-sm border border-primary/10">
+                        <Award className="w-20 h-20" />
+                    </div>
 
-                        <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground pt-4">
-                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
-                                <Clock className="w-4 h-4 mr-2 text-muted-foreground" />
-                                {durationMinutes} Minutes
-                            </span>
-                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
-                                <AlertCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                                {questions.length} Questions
-                            </span>
-                            <span className="flex items-center bg-muted/50 px-3 py-1 rounded-full border border-border/50">
-                                <CheckCircle className="w-4 h-4 mr-2 text-muted-foreground" />
-                                {passingScore}% Passing
-                            </span>
+                    <div className="space-y-6">
+                        <div className="space-y-2">
+                            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground bg-secondary/50 px-4 py-1.5 rounded-full border border-border/50">Final Assessment</span>
+                            <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground">{title}</h1>
+                        </div>
+                        <p className="text-xl text-muted-foreground leading-relaxed max-w-lg mx-auto font-medium">{description}</p>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 md:gap-8 py-4">
+                        <div className="flex flex-col items-center p-5 rounded-2xl bg-secondary/20 border border-border/40 backdrop-blur-sm">
+                            <Clock className="w-6 h-6 text-primary mb-2 opacity-80" />
+                            <div className="text-2xl font-bold font-mono text-foreground">{durationMinutes}m</div>
+                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mt-1">Time Limit</div>
+                        </div>
+                        <div className="flex flex-col items-center p-5 rounded-2xl bg-secondary/20 border border-border/40 backdrop-blur-sm">
+                            <HelpCircle className="w-6 h-6 text-primary mb-2 opacity-80" />
+                            <div className="text-2xl font-bold font-mono text-foreground">{questions.length}</div>
+                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mt-1">Questions</div>
+                        </div>
+                        <div className="flex flex-col items-center p-5 rounded-2xl bg-secondary/20 border border-border/40 backdrop-blur-sm">
+                            <Flag className="w-6 h-6 text-primary mb-2 opacity-80" />
+                            <div className="text-2xl font-bold font-mono text-foreground">{passingScore}%</div>
+                            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mt-1">Pass Score</div>
                         </div>
                     </div>
 
-                    <div className="max-w-xl mx-auto text-center border-t border-border/50 pt-12">
-                        <p className="text-muted-foreground mb-8">Ready to begin? The timer will start immediately.</p>
-                        <button
-                            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-12 h-14 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
-                            onClick={() => setStarted(true)}
-                        >
-                            Start Final Exam
-                        </button>
-                    </div>
+                    <Button
+                        onClick={() => setStarted(true)}
+                        size="lg"
+                        variant="premium"
+                        className="px-16 h-16 text-xl rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 w-full md:w-auto hover:scale-105 transition-all duration-300 font-bold"
+                    >
+                        Start Final Exam <PlayCircle className="ml-3 w-6 h-6" />
+                    </Button>
                 </div>
             </div>
         );
     }
 
+    // ------------------------------------------------------------------------
+    // RENDER: FINISHED (Results Card)
+    // ------------------------------------------------------------------------
     if (finished) {
         const passed = score >= passingScore;
         return (
-            <div className="flex-1 overflow-y-auto bg-card h-full">
-                <div className="max-w-2xl mx-auto text-center space-y-8 pt-16 pb-20">
+            <div className="flex-1 flex flex-col items-center justify-center py-12 animate-fade-in relative z-10">
+                <div className={cn(
+                    "w-full h-2 absolute top-0 inset-x-0 opacity-50",
+                    passed ? "bg-gradient-to-r from-emerald-500/0 via-emerald-500/50 to-emerald-500/0" : "bg-gradient-to-r from-destructive/0 via-destructive/50 to-destructive/0"
+                )} />
+
+                <div className="max-w-xl w-full text-center relative z-10 px-4">
                     <div className={cn(
-                        "w-24 h-24 rounded-full flex items-center justify-center mx-auto border-4",
-                        passed ? "bg-green-500/10 border-green-500/20" : "bg-destructive/10 border-destructive/20"
+                        "w-40 h-40 rounded-full flex items-center justify-center mx-auto mb-10 shadow-3xl border-8 relative transition-all duration-500",
+                        passed ? "bg-card text-emerald-600 border-emerald-500/20 shadow-emerald-500/20" : "bg-card text-destructive border-destructive/20 shadow-destructive/20"
                     )}>
-                        <span className={cn(
-                            "text-3xl font-bold",
-                            passed ? "text-green-600" : "text-destructive"
-                        )}>{score}%</span>
+                        <span className="text-5xl font-black tracking-tighter">{score}%</span>
+                        <div className={cn(
+                            "absolute -bottom-4 px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg border",
+                            passed ? "bg-emerald-500 text-white border-emerald-400" : "bg-destructive text-white border-destructive"
+                        )}>
+                            {passed ? "Passed" : "Failed"}
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-3xl font-bold text-foreground mb-3">{passed ? "Congratulations!" : "Keep Practicing"}</h2>
-                        <p className="text-muted-foreground text-base">
-                            {passed ? "You have successfully passed the final exam." : "You did not meet the passing score. Review the course material and try again."}
-                        </p>
-                    </div>
-                    <div className="flex gap-4 justify-center mt-8">
-                        <button
-                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
-                            onClick={() => {
-                                setStarted(false);
-                                setFinished(false);
-                                setTimeLeft(durationMinutes * 60);
-                                setAnswers({});
-                                setScore(0);
-                            }}
+
+                    <h2 className="text-4xl font-black mb-6 text-foreground tracking-tight">{passed ? "Excellent Work!" : "Keep Practicing"}</h2>
+                    <p className="text-muted-foreground text-xl mb-12 leading-relaxed max-w-md mx-auto">
+                        {passed ? "You've demonstrated mastery of the course material." : `You missed the passing score of ${passingScore}%. Review the material and try again.`}
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            className="h-14 px-8 rounded-xl border-border/60 hover:bg-secondary/50 text-base font-semibold"
+                            onClick={() => { setStarted(false); setFinished(false); setScore(0); setAnswers({}); setTimeLeft(durationMinutes * 60); setCurrentPage(0); }}
                         >
-                            Retry Exam
-                        </button>
-                        <button
-                            className="px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                            <RefreshCw className="mr-2 w-5 h-5" /> Rewrite Exam
+                        </Button>
+                        <Button
+                            variant={passed ? "premium" : "secondary"}
+                            size="lg"
+                            className="h-14 px-10 rounded-xl shadow-lg text-base font-bold"
                             onClick={() => window.location.reload()}
                         >
-                            Return to Course
-                        </button>
+                            <ArrowLeft className="mr-2 w-5 h-5" /> Return Home
+                        </Button>
                     </div>
                 </div>
             </div>
         );
     }
 
+    // ------------------------------------------------------------------------
+    // RENDER: IN PROGRESS (Pagination)
+    // ------------------------------------------------------------------------
+
     return (
-        <div className="flex-1 overflow-y-auto bg-card h-full">
-            <div className="max-w-4xl mx-auto px-6 py-8">
-                {/* Sticky Header */}
-                <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-4 mb-8 flex justify-between items-center -mx-6 px-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
-                        <p className="text-sm text-muted-foreground mt-1">{questions.length} questions • {passingScore}% to pass</p>
+        <div className="flex-1 flex flex-col h-full relative">
+
+            {/* Floating Glass Header */}
+            <div className="sticky top-2 z-40 mb-10">
+                <div className="bg-background/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg shadow-black/5 rounded-2xl p-4 flex items-center justify-between mx-auto max-w-4xl ring-1 ring-black/5">
+                    <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 bg-gradient-to-br from-primary to-violet-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                            <Award className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="font-bold text-base text-foreground leading-tight">Final Exam</h2>
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mt-0.5">Page {currentPage + 1} of {totalPages}</p>
+                        </div>
                     </div>
-                    <div className={cn(
-                        "flex items-center gap-2 px-4 py-2 rounded-lg font-medium",
-                        timeLeft < 60 ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-muted-foreground"
-                    )}>
-                        <Clock className="h-4 w-4" />
-                        <span className="font-mono text-sm">{formatTime(timeLeft)}</span>
+
+                    {/* Integrated Progress & Timer */}
+                    <div className="flex items-center">
+                        <div className="hidden md:flex items-center gap-4 px-6 border-r border-border/50 mr-6">
+                            <div className="text-right">
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Progress</div>
+                                <div className="text-sm font-bold text-foreground">
+                                    <span className="text-primary">{answeredCount}</span> / {questions.length}
+                                </div>
+                            </div>
+
+                            {/* SVG Progress Circle */}
+                            <div className="relative w-10 h-10 flex items-center justify-center">
+                                <svg className="w-full h-full -rotate-90" viewBox="0 0 40 40">
+                                    {/* Track */}
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r={circleRadius}
+                                        fill="none"
+                                        className="stroke-muted/30"
+                                        strokeWidth="4"
+                                    />
+                                    {/* Indicator */}
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r={circleRadius}
+                                        fill="none"
+                                        className="stroke-primary transition-all duration-500 ease-out"
+                                        strokeWidth="4"
+                                        strokeDasharray={circleCircumference}
+                                        strokeDashoffset={strokeDashoffset}
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div className={cn(
+                            "pl-0 md:pl-0 flex items-center gap-3 font-mono text-xl font-bold transition-colors",
+                            timeLeft < 300 ? "text-destructive custom-pulse" : "text-foreground"
+                        )}>
+                            <div className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50",
+                                timeLeft < 300 && "bg-destructive/10 border-destructive/20"
+                            )}>
+                                <Timer className={cn("w-5 h-5", timeLeft < 300 ? "text-destructive" : "text-primary")} />
+                                {formatTime(timeLeft)}
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div className="space-y-12 max-w-3xl">
-                    {questions.map((q, idx) => (
-                        <div key={q.id} className="space-y-5">
-                            <div className="flex gap-4">
-                                <span className="font-bold text-muted-foreground flex-shrink-0 mt-1 text-base">{idx + 1}.</span>
-                                <div className="flex-1 space-y-5">
-                                    <p className="text-foreground text-base leading-7">{q.text}</p>
+            {/* Questions Container (Unified Card/List) */}
+            <div className="pb-32 max-w-3xl mx-auto w-full flex-1">
 
+                <div className="space-y-8">
+                    {currentQuestions.map((q, idx) => {
+                        const actualIndex = (currentPage * QUESTIONS_PER_PAGE) + idx;
+                        return (
+                            <div key={q.id} className="py-2 animate-in fade-in slide-in-from-right-4 duration-500" style={{ animationDelay: `${idx * 100}ms` }}>
+
+                                <div className="flex items-start gap-5 mb-8">
+                                    <div className="flex-none pt-1">
+                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm font-bold text-foreground border border-border/50 shadow-sm">
+                                            {actualIndex + 1}
+                                        </div>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-foreground leading-tight pt-1">
+                                        {q.text}
+                                    </h3>
+                                </div>
+
+                                <div className="pl-0 md:pl-14">
                                     {/* MULTIPLE CHOICE */}
                                     {q.type === 'multiple-choice' && q.options && (
                                         <div className="space-y-2.5">
@@ -229,48 +343,62 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                                     key={optIdx}
                                                     onClick={() => handleAnswerChange(q.id, optIdx)}
                                                     className={cn(
-                                                        "flex items-start gap-3 py-3 px-4 rounded-xl cursor-pointer transition-all border border-transparent",
-                                                        answers[q.id] === optIdx && "bg-primary/10 border-primary/20",
-                                                        answers[q.id] !== optIdx && "bg-muted/30 hover:bg-muted border-border/30"
+                                                        "flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer group/opt",
+                                                        answers[q.id] === optIdx
+                                                            ? "border-primary bg-primary/5 text-foreground shadow-sm"
+                                                            : "border-transparent bg-secondary/20 hover:bg-secondary/40 hover:border-border/50 text-muted-foreground hover:text-foreground"
                                                     )}
                                                 >
                                                     <div className={cn(
-                                                        "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
-                                                        answers[q.id] === optIdx ? "border-primary bg-primary" : "border-muted-foreground/30"
+                                                        "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                                                        answers[q.id] === optIdx ? "border-primary" : "border-muted-foreground/30"
                                                     )}>
-                                                        {answers[q.id] === optIdx && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
+                                                        {answers[q.id] === optIdx && <div className="w-3 h-3 bg-primary rounded-full animate-in zoom-in" />}
                                                     </div>
-                                                    <span className={cn(
-                                                        "text-sm leading-6",
-                                                        answers[q.id] === optIdx ? "text-foreground font-medium" : "text-muted-foreground"
-                                                    )}>{opt}</span>
+                                                    <span className="text-sm font-medium">{opt}</span>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
+                                    {/* FILL BLANK */}
+                                    {q.type === 'fill-blank' && (
+                                        <div className="max-w-md">
+                                            <Input
+                                                placeholder={q.placeholder || "Type your answer..."}
+                                                value={answers[q.id] as string || ""}
+                                                onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                                className="h-11 px-4 rounded-lg text-base border-2 border-border/40 bg-muted/10 focus:bg-background focus:border-primary transition-all shadow-sm"
+                                            />
+                                        </div>
+                                    )}
+
                                     {/* MATCHING */}
                                     {q.type === 'matching' && q.matchingPairs && (
-                                        <div className="space-y-6 max-w-2xl">
+                                        <div className="space-y-6 pt-2">
                                             {q.matchingPairs.map((pair, pIdx) => {
                                                 const currentSelection = answers[q.id]?.[pair.left] || "";
-
                                                 return (
-                                                    <div key={pIdx} className="space-y-2">
-                                                        <div className="text-foreground text-sm font-medium">{pair.left}</div>
+                                                    <div key={pIdx} className="bg-secondary/10 p-5 rounded-2xl border-2 border-dashed border-border/40">
+                                                        <div className="mb-4 text-sm font-bold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
+                                                            {pair.left}
+                                                        </div>
                                                         <div className="flex flex-wrap gap-2">
                                                             {shuffledOptionsMap[q.id]?.map((opt, oIdx) => (
-                                                                <button
+                                                                <Button
                                                                     key={oIdx}
+                                                                    variant={currentSelection === opt ? "default" : "outline"}
                                                                     onClick={() => handleMatchingChange(q.id, pair.left, opt)}
                                                                     className={cn(
-                                                                        "px-4 py-2 text-sm rounded-lg border transition-all",
-                                                                        currentSelection === opt && "bg-primary/10 border-primary text-primary font-medium",
-                                                                        currentSelection !== opt && "border-border text-muted-foreground hover:bg-muted"
+                                                                        "rounded-lg border-2 text-sm h-10 px-4",
+                                                                        currentSelection === opt
+                                                                            ? "border-primary shadow-md shadow-primary/20"
+                                                                            : "border-transparent bg-card hover:border-border/50"
                                                                     )}
                                                                 >
                                                                     {opt}
-                                                                </button>
+                                                                </Button>
                                                             ))}
                                                         </div>
                                                     </div>
@@ -279,84 +407,102 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                         </div>
                                     )}
 
-                                    {/* FILL BLANK */}
-                                    {q.type === 'fill-blank' && (
-                                        <Input
-                                            placeholder={q.placeholder || "Type answer..."}
-                                            value={answers[q.id] as string || ""}
-                                            onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                                            className="max-w-md border-input focus:border-primary text-foreground bg-background"
-                                        />
-                                    )}
-
                                     {/* WRITING */}
                                     {q.type === 'writing' && (
-                                        <textarea
-                                            className="w-full min-h-[120px] p-3 rounded-xl border border-input bg-background/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                                            placeholder={q.placeholder || "Write here..."}
+                                        <Textarea
+                                            placeholder={q.placeholder || "Write your response here..."}
                                             value={answers[q.id] as string || ""}
                                             onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                            className="min-h-[200px] text-lg rounded-xl border-2 border-border/40 bg-muted/10 focus:bg-background focus:border-primary transition-all resize-y shadow-sm p-6 leading-relaxed"
                                         />
                                     )}
 
-                                    {/* MULTIMEDIA */}
+                                    {/* MEDIA (AUDIO/VIDEO) */}
                                     {(q.type === 'audio' || q.type === 'video') && (
-                                        <div className="border-2 border-dashed border-border/60 rounded-xl p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors bg-muted/10">
+                                        <div className="pt-2">
                                             {answers[q.id] ? (
-                                                <div className="text-center space-y-2">
-                                                    <CheckCircle className="h-8 w-8 text-green-600 mx-auto" />
-                                                    <p className="font-medium text-sm text-foreground">Response Recorded</p>
-                                                    <button
-                                                        onClick={() => handleAnswerChange(q.id, "")}
-                                                        className="text-sm text-muted-foreground hover:text-destructive underline"
-                                                    >
-                                                        Remove
-                                                    </button>
+                                                <div className="flex items-center gap-4 text-emerald-600 bg-emerald-500/10 p-5 rounded-2xl border border-emerald-500/20 max-w-sm">
+                                                    <div className="h-12 w-12 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                                                        <CheckCircle className="w-6 h-6" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="font-bold text-foreground text-lg">Response Recorded</p>
+                                                        <button
+                                                            onClick={() => handleAnswerChange(q.id, "")}
+                                                            className="text-sm font-semibold text-destructive hover:underline mt-2"
+                                                        >
+                                                            Remove & Re-record
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             ) : (
-                                                <div className="text-center space-y-4">
-                                                    <div className="w-10 h-10 bg-muted/50 text-muted-foreground rounded-full flex items-center justify-center mx-auto">
-                                                        {q.type === 'audio' ? <Mic className="h-5 w-5" /> : <VideoIcon className="h-5 w-5" />}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-medium text-sm text-foreground">
-                                                            {q.type === 'audio' ? "Record Audio" : "Record Video"}
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground">Upload or record directly</p>
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => handleAnswerChange(q.id, "file.mp3")}
-                                                            className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
-                                                        >
-                                                            <UploadCloud className="h-4 w-4" /> Upload
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleAnswerChange(q.id, "rec.mp3")}
-                                                            className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                                        >
-                                                            Record
-                                                        </button>
-                                                    </div>
+                                                <div className="flex flex-wrap gap-4">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => handleAnswerChange(q.id, "mock_file.mp3")}
+                                                        className="rounded-xl border-dashed border-2 h-16 px-8 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all text-muted-foreground text-lg"
+                                                    >
+                                                        <UploadCloud className="w-6 h-6 mr-3" /> Upload File
+                                                    </Button>
+                                                    <Button
+                                                        variant="secondary"
+                                                        onClick={() => handleAnswerChange(q.id, "mock_recording.mp3")}
+                                                        className="rounded-xl h-16 px-8 bg-secondary/80 hover:bg-secondary text-foreground text-lg"
+                                                    >
+                                                        {q.type === 'audio' ? <Mic className="w-6 h-6 mr-3" /> : <VideoIcon className="w-6 h-6 mr-3" />}
+                                                        Record {q.type === 'audio' ? 'Audio' : 'Video'}
+                                                    </Button>
                                                 </div>
                                             )}
                                         </div>
                                     )}
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
-                {/* Submit Button */}
-                <div className="mt-16 flex justify-center pb-20">
-                    <button
-                        className="px-10 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1"
-                        onClick={handleSubmit}
-                        disabled={Object.keys(answers).length < questions.length}
-                    >
-                        Submit
-                    </button>
+                {/* FLOATING NAVIGATION PILL */}
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-500">
+                    <div className="bg-foreground/5 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-full p-2 pl-3 flex items-center gap-2 ring-1 ring-black/5">
+
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={currentPage === 0}
+                            onClick={goPrevPage}
+                            className="w-12 h-12 rounded-full hover:bg-white/20 text-foreground transition-all disabled:opacity-30"
+                            title="Previous Page"
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </Button>
+
+                        <div className="h-8 w-px bg-foreground/10 mx-1" />
+
+                        {/* Show Submit button ONLY on last PAGE */}
+                        {currentPage === totalPages - 1 ? (
+                            <Button
+                                onClick={handleSubmit}
+                                disabled={Object.keys(answers).length < questions.length}
+                                size="lg"
+                                variant="premium"
+                                className={cn(
+                                    "rounded-full px-8 h-12 text-base font-bold shadow-lg shadow-indigo-500/25 transition-all duration-300",
+                                    Object.keys(answers).length < questions.length ? "opacity-70 grayscale" : "hover:scale-105"
+                                )}
+                            >
+                                Submit Exam <Send className="w-4 h-4 ml-2" />
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={goNextPage}
+                                size="lg"
+                                className="rounded-full px-8 h-12 text-base font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-md transition-all hover:scale-105"
+                            >
+                                Next Page <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
-import { ENGLISH_COURSE } from "@/data/mockCourse";
-import type { CourseData } from "@/data/mockCourse";
+import { MOCK_COURSE } from "@/data/mockCourse";
+import type { Course } from "@/data/mockCourse";
 
 /**
  * Service to simulate API calls.
@@ -13,13 +13,13 @@ export const courseService = {
     /**
      * Fetch the full course data by ID.
      */
-    getCourseById: async (id: string): Promise<CourseData> => {
+    getCourseById: async (id: string): Promise<Course> => {
         await delay(800); // Simulate authentic loading wait
 
         // In a real app, we would look up by ID. 
         // For now, we always return the English course if requested.
         if (id === 'english-101' || id === 'demo') {
-            return { ...ENGLISH_COURSE };
+            return { ...MOCK_COURSE };
         }
 
         throw new Error("Course not found");

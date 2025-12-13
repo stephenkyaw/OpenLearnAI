@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Mic, Video as VideoIcon, UploadCloud } from "lucide-react";
+import { CheckCircle, Mic, Video as VideoIcon, UploadCloud, HelpCircle, RefreshCw, Check, X, ArrowRight, Flag } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Question } from "@/data/mockCourse";
 
 interface QuizBlockProps {
@@ -13,21 +15,14 @@ interface QuizBlockProps {
 }
 
 export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: QuizBlockProps) {
-    // Store answers. 
-    // For Matching: answers[qId] = { "leftItem1": "selectedRight1", "leftItem2": "selectedRight2" } (stored as JSON string or handled via separate state? Let's use any for flexibility here)
     const [answers, setAnswers] = useState<Record<string, any>>({});
     const [submitted, setSubmitted] = useState(false);
-    // If embedded, run minimalist mode (no outer card styling)
-    const containerClasses = isEmbedded
-        ? "w-full space-y-6"
-        : "w-full max-w-3xl space-y-6";
 
-    // Memoize shuffled options for matching questions so they don't re-shuffle on render
+    // Memoize shuffled options
     const shuffledOptionsMap = useMemo(() => {
         const map: Record<string, string[]> = {};
         questions.forEach(q => {
             if (q.type === 'matching' && q.matchingPairs) {
-                // Get all 'right' sides and shuffle them
                 const rights = q.matchingPairs.map(p => p.right);
                 map[q.id] = [...rights].sort(() => Math.random() - 0.5);
             }
@@ -57,19 +52,16 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
 
         questions.forEach(q => {
             const userAns = answers[q.id];
-
             if (q.type === 'multiple-choice') {
                 if (userAns === q.correctAnswer) correctCount++;
             } else if (q.type === 'fill-blank') {
                 if (String(userAns).toLowerCase().trim() === String(q.correctAnswer).toLowerCase().trim()) correctCount++;
             } else if (q.type === 'matching') {
-                // Check if every pair is correct
                 if (q.matchingPairs && userAns) {
                     const allCorrect = q.matchingPairs.every(pair => userAns[pair.left] === pair.right);
                     if (allCorrect) correctCount++;
                 }
             } else {
-                // Manual Grading (Writing, etc) - Assume correct if exists
                 if (userAns) correctCount++;
             }
         });
@@ -80,7 +72,6 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
     const isAnswered = (q: Question) => {
         const val = answers[q.id];
         if (q.type === 'matching' && q.matchingPairs) {
-            // Must have selected a value for EVERY left item
             if (!val) return false;
             return q.matchingPairs.every(p => val[p.left]);
         }
@@ -90,17 +81,17 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
     const allAnswered = questions.every(isAnswered);
 
     return (
-        <div className={containerClasses}>
+        <div className="w-full animate-fade-in group/quiz">
             {!isEmbedded && (
-                <div className="mb-8 mt-12">
-                    <h3 className="text-xl font-bold text-foreground mb-2">
-                        {title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">Complete the following questions to check your understanding.</p>
+                <div className="mb-6 flex items-center gap-3 pb-2">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/20">
+                        <Flag className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground">{title}</h3>
                 </div>
             )}
 
-            <div className="space-y-10">
+            <div className="space-y-6">
                 {questions.map((q, idx) => {
                     const userAns = answers[q.id];
                     let isCorrect = false;
@@ -116,215 +107,258 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                     }
 
                     return (
-                        <div key={q.id} className="space-y-4">
-                            <div className="flex gap-4">
-                                <span className="font-bold text-muted-foreground flex-shrink-0 mt-1 text-base">{idx + 1}.</span>
-                                <div className="flex-1 space-y-5">
-                                    <p className="text-foreground text-base leading-7 font-medium">{q.text}</p>
+                        <div key={q.id} className="py-6 first:pt-0 last:pb-0 relative group/item">
+                            {/* Decorative Indicator for Correct/Incorrect on left border */}
+                            {submitted && (
+                                <div className={cn(
+                                    "absolute left-[-20px] top-10 bottom-10 w-1 rounded-full",
+                                    isCorrect ? "bg-emerald-500" : "bg-destructive"
+                                )} />
+                            )}
 
-                                    {/* --- MULTIPLE CHOICE --- */}
-                                    {q.type === 'multiple-choice' && q.options && (
-                                        <div className="space-y-2.5">
-                                            {q.options.map((opt, optIdx) => (
-                                                <div
-                                                    key={optIdx}
-                                                    onClick={() => handleAnswerChange(q.id, optIdx)}
-                                                    className={cn(
-                                                        "flex items-start gap-3 py-3 px-4 rounded-xl cursor-pointer transition-all border border-transparent",
-                                                        !submitted && userAns === optIdx && "bg-primary/10 border-primary/20",
-                                                        !submitted && userAns !== optIdx && "bg-muted/30 hover:bg-muted border-border/30",
-                                                        submitted && q.correctAnswer === optIdx && "bg-green-500/10 border-green-500/20",
-                                                        submitted && userAns === optIdx && userAns !== q.correctAnswer && "bg-destructive/10 border-destructive/20",
-                                                        submitted && userAns !== optIdx && q.correctAnswer !== optIdx && "opacity-50"
+                            {/* Question Header */}
+                            <div className="flex items-start gap-3 mb-4">
+                                <div className="flex-none">
+                                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-sm font-bold text-muted-foreground border border-border/50">
+                                        {idx + 1}
+                                    </div>
+                                </div>
+                                <h4 className="text-lg font-bold text-foreground leading-snug pt-0.5">
+                                    {q.text}
+                                </h4>
+                            </div>
+
+                            <div className="pl-0 md:pl-12">
+                                {/* MULTIPLE CHOICE */}
+                                {q.type === 'multiple-choice' && q.options && (
+                                    <div className="space-y-2">
+                                        {q.options.map((opt, optIdx) => (
+                                            <div
+                                                key={optIdx}
+                                                onClick={() => handleAnswerChange(q.id, optIdx)}
+                                                className={cn(
+                                                    "flex items-center gap-3 p-2.5 rounded-lg border transition-all cursor-pointer group/opt",
+                                                    !submitted && answers[q.id] === optIdx
+                                                        ? "border-primary bg-primary/5 text-foreground shadow-sm"
+                                                        : "border-transparent bg-secondary/30 hover:bg-secondary/60 hover:border-border/50 text-muted-foreground hover:text-foreground",
+
+                                                    submitted && "cursor-default",
+
+                                                    submitted && q.correctAnswer === optIdx && "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-medium",
+                                                    submitted && answers[q.id] === optIdx && answers[q.id] !== q.correctAnswer && "border-destructive bg-destructive/10 text-destructive"
+                                                )}
+                                            >
+                                                <div className={cn(
+                                                    "w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-colors",
+                                                    !submitted && answers[q.id] === optIdx ? "border-primary" : "border-muted-foreground/40",
+                                                    submitted && q.correctAnswer === optIdx && "border-emerald-500 bg-emerald-500 text-white",
+                                                    submitted && answers[q.id] === optIdx && answers[q.id] !== q.correctAnswer && "border-destructive bg-destructive text-white"
+                                                )}>
+                                                    {(submitted && (q.correctAnswer === optIdx || answers[q.id] === optIdx)) && (
+                                                        q.correctAnswer === optIdx ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />
                                                     )}
-                                                >
-                                                    <div className={cn(
-                                                        "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
-                                                        !submitted && userAns === optIdx ? "border-primary bg-primary" : "border-muted-foreground/30",
-                                                        submitted && q.correctAnswer === optIdx && "border-green-600 bg-green-600",
-                                                        submitted && userAns === optIdx && userAns !== q.correctAnswer && "border-destructive bg-destructive"
-                                                    )}>
-                                                        {(!submitted && userAns === optIdx) && <div className="w-2 h-2 bg-primary-foreground rounded-full" />}
-                                                    </div>
-                                                    <span className={cn(
-                                                        "text-sm leading-6",
-                                                        !submitted && userAns === optIdx ? "text-foreground font-medium" : "text-muted-foreground",
-                                                        submitted && q.correctAnswer === optIdx ? "text-green-700" : ""
-                                                    )}>{opt}</span>
+                                                    {!submitted && answers[q.id] === optIdx && <div className="w-2.5 h-2.5 bg-primary rounded-full" />}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                                <span className="text-sm font-medium flex-1">{opt}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-                                    {/* --- FILL IN THE BLANK --- */}
-                                    {q.type === 'fill-blank' && (
-                                        <div className="max-w-md">
+                                {/* FILL BLANK */}
+                                {q.type === 'fill-blank' && (
+                                    <div className="max-w-md">
+                                        <div className="relative">
                                             <Input
                                                 disabled={submitted}
-                                                placeholder={q.placeholder || "Type your answer..."}
+                                                placeholder="Type your answer..."
                                                 value={userAns as string || ""}
                                                 onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                                                 className={cn(
-                                                    "border-input focus:border-primary text-foreground bg-background",
-                                                    submitted && isCorrect && "border-green-500 bg-green-500/10",
-                                                    submitted && !isCorrect && "border-destructive bg-destructive/10"
+                                                    "h-10 rounded-lg text-base border-border/60 bg-muted/20 focus:bg-background focus:border-primary transition-all shadow-sm",
+                                                    submitted && isCorrect && "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-900/20 dark:text-emerald-100",
+                                                    submitted && !isCorrect && "border-destructive bg-destructive/5 text-destructive"
                                                 )}
                                             />
-                                            {submitted && !isCorrect && (
-                                                <p className="text-xs text-muted-foreground mt-2">Correct answer: <span className="font-medium text-foreground">{q.correctAnswer}</span></p>
-                                            )}
                                         </div>
-                                    )}
+                                        {submitted && !isCorrect && (
+                                            <div className="mt-2 text-sm font-medium text-emerald-600 animate-in fade-in flex items-center gap-1 bg-emerald-500/10 w-fit px-3 py-1 rounded-lg border border-emerald-500/20">
+                                                <CheckCircle className="w-3 h-3" /> Correct Answer: <span className="font-bold ml-1">{q.correctAnswer}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
-                                    {/* --- MATCHING --- */}
-                                    {q.type === 'matching' && q.matchingPairs && (
-                                        <div className="space-y-6 max-w-2xl">
-                                            {q.matchingPairs.map((pair, pIdx) => {
-                                                const currentSelection = userAns?.[pair.left] || "";
-                                                const isPairCorrect = currentSelection === pair.right;
+                                {/* MATCHING */}
+                                {q.type === 'matching' && q.matchingPairs && (
+                                    <div className="space-y-4 pt-2">
+                                        {q.matchingPairs.map((pair, pIdx) => {
+                                            const currentSelection = userAns?.[pair.left] || "";
+                                            const isPairCorrect = currentSelection === pair.right;
 
-                                                return (
-                                                    <div key={pIdx} className="space-y-2">
-                                                        <div className="text-foreground text-sm font-medium">{pair.left}</div>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {shuffledOptionsMap[q.id]?.map((opt, oIdx) => (
-                                                                <button
-                                                                    key={oIdx}
-                                                                    disabled={submitted}
-                                                                    onClick={() => handleMatchingChange(q.id, pair.left, opt)}
-                                                                    className={cn(
-                                                                        "px-4 py-2 text-sm rounded-lg border transition-all",
-                                                                        !submitted && currentSelection === opt && "bg-primary/10 border-primary text-primary font-medium",
-                                                                        !submitted && currentSelection !== opt && "border-border text-muted-foreground hover:bg-muted",
-                                                                        submitted && currentSelection === opt && isPairCorrect && "bg-green-500/10 border-green-600 text-green-700",
-                                                                        submitted && currentSelection === opt && !isPairCorrect && "bg-destructive/10 border-destructive text-destructive",
-                                                                        submitted && currentSelection !== opt && "border-border text-muted-foreground opacity-50"
-                                                                    )}
-                                                                >
-                                                                    {opt}
-                                                                    {submitted && currentSelection === opt && (
-                                                                        <span className="ml-2">
-                                                                            {isPairCorrect ? "✓" : "✗"}
-                                                                        </span>
-                                                                    )}
-                                                                </button>
-                                                            ))}
-                                                        </div>
+                                            return (
+                                                <div key={pIdx} className="bg-secondary/20 p-4 rounded-xl border border-dashed border-border/60">
+                                                    <div className="mb-3 text-sm font-bold text-muted-foreground uppercase tracking-wide">{pair.left}</div>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {shuffledOptionsMap[q.id]?.map((opt, oIdx) => (
+                                                            <Button
+                                                                key={oIdx}
+                                                                disabled={submitted}
+                                                                variant={!submitted && currentSelection === opt ? "default" : "outline"}
+                                                                onClick={() => handleMatchingChange(q.id, pair.left, opt)}
+                                                                className={cn(
+                                                                    "rounded-lg border-border/50 text-sm h-9",
+                                                                    !submitted && currentSelection === opt && "shadow-md shadow-primary/20",
+                                                                    submitted && currentSelection === opt && isPairCorrect && "bg-emerald-500 border-emerald-500 text-white hover:bg-emerald-600",
+                                                                    submitted && currentSelection === opt && !isPairCorrect && "bg-destructive border-destructive text-white hover:bg-destructive"
+                                                                )}
+                                                            >
+                                                                {opt}
+                                                            </Button>
+                                                        ))}
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-
-                                    {/* --- WRITING --- */}
-                                    {q.type === 'writing' && (
-                                        <div className="space-y-2">
-                                            <textarea
-                                                disabled={submitted}
-                                                placeholder={q.placeholder || "Write your response here..."}
-                                                value={userAns as string || ""}
-                                                onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                                                className={cn(
-                                                    "w-full min-h-[120px] p-3 rounded-xl border border-input bg-background/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-y",
-                                                    submitted && "border-green-500 bg-green-500/5"
-                                                )}
-                                            />
-                                            {submitted && (
-                                                <div className="flex items-center text-xs text-muted-foreground">
-                                                    <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-green-600" /> Submitted for review
                                                 </div>
-                                            )}
-                                        </div>
-                                    )}
+                                            );
+                                        })}
+                                    </div>
+                                )}
 
-                                    {/* --- MULTIMEDIA (AUDIO/VIDEO) --- */}
-                                    {(q.type === 'audio' || q.type === 'video') && (
-                                        <div className="border-2 border-dashed border-border/60 rounded-xl p-8 flex flex-col items-center justify-center hover:border-primary/50 transition-colors bg-muted/10">
-                                            {userAns ? (
-                                                <div className="text-center space-y-2">
-                                                    <CheckCircle className="w-10 h-10 text-green-600 mx-auto" />
-                                                    <p className="font-medium text-foreground">File Uploaded</p>
+                                {/* WRITING */}
+                                {q.type === 'writing' && (
+                                    <Textarea
+                                        disabled={submitted}
+                                        placeholder="Type your response..."
+                                        value={userAns as string || ""}
+                                        onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                        className={cn(
+                                            "min-h-[140px] text-lg rounded-xl border-border/60 bg-muted/20 focus:bg-background focus:border-primary transition-all resize-y shadow-sm p-4",
+                                            submitted && "border-emerald-500"
+                                        )}
+                                    />
+                                )}
+
+                                {/* MEDIA (AUDIO/VIDEO) */}
+                                {(q.type === 'audio' || q.type === 'video') && (
+                                    <div className="pt-2">
+                                        {userAns ? (
+                                            <div className="flex items-center gap-4 text-emerald-600 bg-emerald-500/10 p-5 rounded-2xl border border-emerald-500/20 max-w-sm">
+                                                <div className="h-10 w-10 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
+                                                    <CheckCircle className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-bold text-foreground">Response Recorded</p>
+                                                    <p className="text-xs text-muted-foreground mt-0.5">Ready to submit</p>
                                                     <button
                                                         onClick={() => handleAnswerChange(q.id, "")}
                                                         disabled={submitted}
-                                                        className="text-sm text-muted-foreground hover:text-destructive underline"
+                                                        className="text-xs font-semibold text-destructive hover:underline mt-2"
                                                     >
                                                         Remove
                                                     </button>
                                                 </div>
-                                            ) : (
-                                                <div className="text-center space-y-4">
-                                                    <div className="w-12 h-12 bg-muted/50 text-muted-foreground rounded-full flex items-center justify-center mx-auto">
-                                                        {q.type === 'audio' ? <Mic className="w-5 h-5" /> : <VideoIcon className="w-5 h-5" />}
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <h4 className="font-medium text-sm text-foreground">
-                                                            {q.type === 'audio' ? "Record Audio Response" : "Record Video Response"}
-                                                        </h4>
-                                                        <p className="text-xs text-muted-foreground">or upload a file</p>
-                                                    </div>
-                                                    <div className="flex gap-2 justify-center">
-                                                        <button
-                                                            onClick={() => handleAnswerChange(q.id, "mock_file.mp3")}
-                                                            className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
-                                                        >
-                                                            <UploadCloud className="w-4 h-4" /> Upload
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleAnswerChange(q.id, "mock_recording.mp3")}
-                                                            className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                                        >
-                                                            Record
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-wrap gap-3">
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={() => handleAnswerChange(q.id, "mock_file.mp3")}
+                                                    className="rounded-xl border-dashed border-2 h-14 px-6 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all text-muted-foreground"
+                                                >
+                                                    <UploadCloud className="w-5 h-5 mr-2" /> Upload File
+                                                </Button>
+                                                <Button
+                                                    variant="secondary"
+                                                    onClick={() => handleAnswerChange(q.id, "mock_recording.mp3")}
+                                                    className="rounded-xl h-14 px-6 bg-secondary/80 hover:bg-secondary text-foreground"
+                                                >
+                                                    {q.type === 'audio' ? <Mic className="w-5 h-5 mr-2" /> : <VideoIcon className="w-5 h-5 mr-2" />}
+                                                    Record {q.type === 'audio' ? 'Audio' : 'Video'}
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
-                            {submitted && q.explanation && (
-                                <div className="ml-9 pl-4 border-l-2 border-primary/20 text-sm text-muted-foreground">
-                                    <span className="font-semibold text-foreground block mb-1">Explanation:</span>
-                                    {q.explanation}
-                                </div>
-                            )}
+                                {/* EXPLANATION */}
+                                {submitted && q.explanation && (
+                                    <div className="mt-8 p-5 rounded-xl bg-blue-500/10 border border-blue-500/20 flex gap-4 animate-in fade-in slide-in-from-top-2">
+                                        <HelpCircle className="w-6 h-6 text-blue-600 shrink-0" />
+                                        <div>
+                                            <span className="font-bold text-blue-700 dark:text-blue-300 block text-sm uppercase tracking-wider mb-1">Explanation</span>
+                                            <p className="text-blue-900 dark:text-blue-100 leading-relaxed text-sm">
+                                                {q.explanation}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     );
                 })}
             </div>
 
-            {!submitted && (
-                <div className="pt-8 flex justify-start">
+            {!submitted ? (
+                <div className="pt-4 mt-4 flex justify-end">
                     <Button
                         onClick={handleSubmit}
                         disabled={!allAnswered}
-                        className="px-8 py-2.5 rounded-lg font-medium transition-colors"
+                        size="lg"
+                        variant="premium"
+                        className={cn(
+                            "rounded-xl px-8 h-12 text-base font-bold shadow-lg shadow-indigo-500/20 transition-all duration-300",
+                            allAnswered ? "hover:scale-105" : "opacity-70 grayscale"
+                        )}
                     >
-                        Submit
+                        Check Answers <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                 </div>
-            )}
+            ) : (
+                <Card className="mt-12 border-border/60 shadow-xl shadow-black/5 bg-gradient-to-br from-card to-secondary/20 overflow-hidden">
+                    <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex items-center gap-6">
+                            <div className={cn(
+                                "h-20 w-20 rounded-2xl flex items-center justify-center text-3xl font-black shadow-inner border",
+                                questions.reduce((acc, q) => {
+                                    const ans = answers[q.id];
+                                    if (q.type === 'multiple-choice' && ans === q.correctAnswer) return acc + 1;
+                                    if (ans) return acc + 1;
+                                    return acc;
+                                }, 0) / questions.length > 0.7
+                                    ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                    : "bg-primary/10 text-primary border-primary/20"
+                            )}>
+                                {Math.round((questions.reduce((acc, q) => {
+                                    const ans = answers[q.id];
+                                    if (q.type === 'multiple-choice') return acc + (ans === q.correctAnswer ? 1 : 0);
+                                    if (q.type === 'fill-blank') return acc + (String(ans || "").toLowerCase().trim() === String(q.correctAnswer).toLowerCase().trim() ? 1 : 0);
+                                    if (q.type === 'matching') return acc + (q.matchingPairs?.every(p => ans?.[p.left] === p.right) ? 1 : 0);
+                                    return acc + (ans ? 1 : 0);
+                                }, 0) / questions.length) * 100)}%
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-foreground mb-1">Quiz Completed</h3>
+                                <p className="text-muted-foreground">
+                                    You answered {questions.reduce((acc, q) => {
+                                        const ans = answers[q.id];
+                                        if (q.type === 'multiple-choice') return acc + (ans === q.correctAnswer ? 1 : 0);
+                                        return acc + (ans ? 1 : 0);
+                                    }, 0)} out of {questions.length} questions correctly.
+                                </p>
+                            </div>
+                        </div>
 
-            {submitted && (
-                <div className="pt-8">
-                    <div className="flex items-center justify-between text-base">
-                        <span className="flex items-center text-foreground font-medium">
-                            <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-                            Quiz Completed
-                        </span>
-                        <span className="text-primary font-bold text-lg">
-                            {questions.reduce((acc, q) => {
-                                const ans = answers[q.id];
-                                if (q.type === 'multiple-choice') return acc + (ans === q.correctAnswer ? 1 : 0);
-                                if (q.type === 'fill-blank') return acc + (String(ans || "").toLowerCase().trim() === String(q.correctAnswer).toLowerCase().trim() ? 1 : 0);
-                                if (q.type === 'matching') return acc + (q.matchingPairs?.every(p => ans?.[p.left] === p.right) ? 1 : 0);
-                                return acc + (ans ? 1 : 0);
-                            }, 0)} / {questions.length}
-                        </span>
-                    </div>
-                </div>
+                        {onComplete && (
+                            <div className="flex gap-4">
+                                <Button variant="outline" onClick={() => { setSubmitted(false); setAnswers({}); }} className="gap-2 rounded-xl h-12 px-6 border-border/60 bg-background hover:bg-secondary">
+                                    <RefreshCw className="w-4 h-4" /> Reset
+                                </Button>
+                                <Button className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 bg-primary text-primary-foreground hover:bg-primary/90">
+                                    Continue Learning
+                                </Button>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             )}
         </div>
     );

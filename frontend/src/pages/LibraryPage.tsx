@@ -1,12 +1,14 @@
+
 import { useState } from "react";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
     Search, Filter, Upload, FileCode, FileImage, File, BookOpen,
     LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight, FileText,
-    Eye, Download
+    Eye, Download, MoreVertical, Archive, Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -62,66 +64,70 @@ export function LibraryPage() {
 
     return (
         <DashboardLayout>
-            <div className="max-w-6xl pb-10">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 px-2">
+            <div className="max-w-7xl mx-auto pb-10 animate-fade-in">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Document Library</h1>
-                        <p className="text-muted-foreground mt-1">
-                            Manage your source materials and track their usage across courses.
+                        <h1 className="text-4xl font-extrabold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                            Document Library
+                        </h1>
+                        <p className="text-muted-foreground mt-2 text-lg">
+                            Manage source materials and track their usage across generated courses.
                         </p>
                     </div>
-                    <Button className="h-11 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 font-semibold transition-all hover:-translate-y-0.5">
+                    <Button variant="premium" className="shadow-lg shadow-indigo-500/20">
                         <Upload className="h-4 w-4 mr-2" /> Upload Document
                     </Button>
                 </div>
 
                 {/* Controls Section */}
                 <div className="space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border/50">
-                        <div className="flex items-center gap-2 w-full md:w-auto">
-                            <div className="relative flex-1 md:w-80">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search documents..."
-                                    className="pl-10 h-10 bg-muted/50 border-input focus:bg-background transition-colors rounded-xl"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
+                    <Card className="p-4 shadow-sm border-border/60">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="flex items-center gap-3 w-full md:w-auto">
+                                <div className="relative flex-1 md:w-96">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Search documents..."
+                                        className="pl-10 h-11 bg-muted/30 border-input focus:bg-background transition-colors rounded-xl font-medium"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                                <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-input">
+                                    <Filter className="h-4 w-4" />
+                                </Button>
                             </div>
-                            <Button variant="outline" size="icon" className="border-input rounded-xl bg-transparent hover:bg-muted/50">
-                                <Filter className="h-4 w-4" />
-                            </Button>
-                        </div>
 
-                        <div className="flex items-center gap-2 border-l pl-4 border-border/50">
-                            <Button
-                                variant={viewMode === 'grid' ? "secondary" : "ghost"}
-                                size="icon"
-                                onClick={() => setViewMode('grid')}
-                                className={cn("rounded-lg", viewMode === 'grid' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
-                            >
-                                <LayoutGrid className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                variant={viewMode === 'list' ? "secondary" : "ghost"}
-                                size="icon"
-                                onClick={() => setViewMode('list')}
-                                className={cn("rounded-lg", viewMode === 'list' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
-                            >
-                                <ListIcon className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-1 border-l pl-4 border-border/50">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setViewMode('grid')}
+                                    className={cn("h-10 w-10 rounded-lg transition-all", viewMode === 'grid' ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground")}
+                                >
+                                    <LayoutGrid className="h-5 w-5" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setViewMode('list')}
+                                    className={cn("h-10 w-10 rounded-lg transition-all", viewMode === 'list' ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground")}
+                                >
+                                    <ListIcon className="h-5 w-5" />
+                                </Button>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
 
                     <Tabs defaultValue="all" className="w-full" onValueChange={(val) => { setCurrentTab(val); setCurrentPage(1); }}>
-                        <TabsList className="mb-6 bg-transparent p-0 gap-4">
-                            <TabsTrigger value="all" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
+                        <TabsList className="mb-6 bg-transparent p-0 gap-2 h-auto flex-wrap">
+                            <TabsTrigger value="all" className="h-9 px-4 rounded-full border border-transparent data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm hover:bg-muted/50 transition-all text-sm font-medium text-muted-foreground">
                                 All Documents
                             </TabsTrigger>
-                            <TabsTrigger value="linked" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
+                            <TabsTrigger value="linked" className="h-9 px-4 rounded-full border border-transparent data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm hover:bg-muted/50 transition-all text-sm font-medium text-muted-foreground">
                                 Linked
                             </TabsTrigger>
-                            <TabsTrigger value="unlinked" className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground">
+                            <TabsTrigger value="unlinked" className="h-9 px-4 rounded-full border border-transparent data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-sm hover:bg-muted/50 transition-all text-sm font-medium text-muted-foreground">
                                 Unused
                             </TabsTrigger>
                         </TabsList>
@@ -139,34 +145,38 @@ export function LibraryPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="p-12 text-center text-muted-foreground bg-card rounded-3xl border border-dashed border-border">
-                                    <File className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                                    <h3 className="text-lg font-semibold text-foreground">No documents found</h3>
-                                    <p>Try adjusting your search or filters.</p>
+                                <div className="flex flex-col items-center justify-center p-16 text-center bg-card rounded-3xl border border-dashed border-border/60">
+                                    <div className="h-16 w-16 bg-muted/50 rounded-full flex items-center justify-center mb-6">
+                                        <File className="h-8 w-8 text-muted-foreground/50" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-foreground mb-2">No documents found</h3>
+                                    <p className="text-muted-foreground max-w-sm">
+                                        We couldn't find any documents matching your filters. Try adjusting your search query.
+                                    </p>
                                 </div>
                             )}
 
                             {/* Pagination */}
                             {totalPages > 1 && (
-                                <div className="flex justify-center items-center gap-4 mt-10">
+                                <div className="flex justify-center items-center gap-4 mt-12">
                                     <Button
                                         variant="outline"
                                         size="icon"
                                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                         disabled={currentPage === 1}
-                                        className="rounded-full w-10 h-10 border-input bg-card hover:bg-muted"
+                                        className="h-10 w-10 rounded-full border-input hover:bg-muted hover:text-primary transition-colors"
                                     >
                                         <ChevronLeft className="h-4 w-4" />
                                     </Button>
-                                    <span className="text-sm font-medium text-muted-foreground">
-                                        Page {currentPage} of {totalPages}
+                                    <span className="text-sm font-semibold text-muted-foreground">
+                                        Page <span className="text-foreground">{currentPage}</span> of {totalPages}
                                     </span>
                                     <Button
                                         variant="outline"
                                         size="icon"
                                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                         disabled={currentPage === totalPages}
-                                        className="rounded-full w-10 h-10 border-input bg-card hover:bg-muted"
+                                        className="h-10 w-10 rounded-full border-input hover:bg-muted hover:text-primary transition-colors"
                                     >
                                         <ChevronRight className="h-4 w-4" />
                                     </Button>
@@ -184,57 +194,59 @@ function DocumentGridItem({ doc }: { doc: any }) {
     const { icon: Icon, color, bg } = getFileIcon(doc.type);
 
     return (
-        <div className="bg-card rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-border/50 hover:-translate-y-1 flex flex-col h-full cursor-pointer hover:border-primary/20">
-            <div className="relative z-10 flex flex-col h-full">
+        <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 border-border/60 hover:-translate-y-1 hover:border-primary/20 bg-card">
+            <CardContent className="p-6 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
-                    <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105", bg, color)}>
+                    <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm", bg, color)}>
                         <Icon className="h-7 w-7" />
                     </div>
-                    {doc.linkedCourses.length > 0 && (
-                        <div className="flex -space-x-2">
-                            {doc.linkedCourses.slice(0, 3).map((_: any, i: number) => (
-                                <div key={i} className="h-6 w-6 rounded-full bg-muted border border-card flex items-center justify-center text-[8px] font-bold text-muted-foreground shadow-sm">
-                                    <BookOpen className="h-3 w-3" />
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
                 </div>
 
-                <div className="mb-4 flex-1">
-                    <h3 className="text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors truncate">
+                <div className="mb-6 flex-1">
+                    <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors truncate leading-tight">
                         {doc.name}
                     </h3>
-                    <div className="flex items-center text-xs text-muted-foreground font-medium gap-2">
-                        <span className="uppercase">{doc.type}</span>
+                    <div className="flex items-center text-xs text-muted-foreground font-medium gap-2.5">
+                        <span className="uppercase font-bold tracking-wider opacity-70">{doc.type}</span>
                         <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                         <span>{doc.size}</span>
+                        <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                        <span>{doc.date}</span>
                     </div>
                 </div>
 
                 <div className="mt-auto space-y-4">
-                    {doc.linkedCourses.length > 0 ? (
-                        <div className="text-xs text-muted-foreground/80">
-                            Used in <span className="font-semibold text-foreground">{doc.linkedCourses.length} courses</span>
-                        </div>
-                    ) : (
-                        <div className="text-xs text-muted-foreground/50 italic">Unused</div>
-                    )}
+                    <div className="min-h-[24px]">
+                        {doc.linkedCourses.length > 0 ? (
+                            <div className="flex items-center gap-2">
+                                <div className="flex -space-x-2">
+                                    {doc.linkedCourses.slice(0, 3).map((_: any, i: number) => (
+                                        <div key={i} className="h-6 w-6 rounded-full bg-background border border-border flex items-center justify-center text-[8px] font-bold text-muted-foreground shadow-sm">
+                                            <BookOpen className="h-3 w-3" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <span className="text-xs text-muted-foreground font-medium">Used in {doc.linkedCourses.length} courses</span>
+                            </div>
+                        ) : (
+                            <span className="text-xs text-muted-foreground/50 italic flex items-center"><Archive className="h-3 w-3 mr-1.5" /> Unused</span>
+                        )}
+                    </div>
 
-                    <div className="flex items-center justify-between border-t border-border/50 pt-4">
-                        <span className="text-xs text-muted-foreground font-medium">{doc.date}</span>
-                        <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Preview">
-                                <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Download">
-                                <Download className="h-4 w-4" />
-                            </Button>
-                        </div>
+                    <div className="flex items-center gap-2 border-t border-border/40 pt-4 opacity-70 group-hover:opacity-100 transition-opacity">
+                        <Button variant="secondary" size="sm" className="flex-1 h-9 font-medium text-xs bg-muted hover:bg-primary/10 hover:text-primary transition-colors">
+                            <Eye className="h-3.5 w-3.5 mr-2" /> Preview
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     )
 }
 
@@ -242,45 +254,48 @@ function DocumentListItem({ doc }: { doc: any }) {
     const { icon: Icon, color, bg } = getFileIcon(doc.type);
 
     return (
-        <div className="bg-card rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-border/50 hover:shadow-lg transition-all duration-300 group hover:-translate-x-1 cursor-pointer hover:border-primary/20">
-            <div className={cn("h-16 w-16 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105", bg, color)}>
-                <Icon className="h-8 w-8" />
-            </div>
-
-            <div className="flex-1 min-w-0 text-center sm:text-left">
-                <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors truncate mb-1">
-                    {doc.name}
-                </h3>
-                <div className="flex items-center justify-center sm:justify-start text-xs text-muted-foreground font-medium gap-2 mb-2">
-                    <span className="uppercase">{doc.type}</span>
-                    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-                    <span>{doc.size}</span>
-                    <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-                    <span>{doc.date}</span>
+        <Card className="hover:shadow-md transition-all duration-300 group hover:border-primary/20 border-border/60 cursor-default">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-sm", bg, color)}>
+                    <Icon className="h-6 w-6" />
                 </div>
 
-                {doc.linkedCourses.length > 0 ? (
-                    <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                        {doc.linkedCourses.map((course: string, idx: number) => (
-                            <Badge key={idx} variant="secondary" className="bg-muted/50 border border-border text-muted-foreground font-medium text-[10px] pl-1.5 hover:bg-card hover:shadow-sm transition-all">
-                                <BookOpen className="w-3 h-3 mr-1 text-primary" />
-                                {course}
-                            </Badge>
-                        ))}
+                <div className="flex-1 min-w-0 text-center sm:text-left grid grid-cols-1 md:grid-cols-4 gap-4 items-center w-full">
+                    <div className="md:col-span-2 min-w-0">
+                        <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors truncate mb-1">
+                            {doc.name}
+                        </h3>
+                        <div className="flex items-center justify-center sm:justify-start text-xs text-muted-foreground font-medium gap-2">
+                            <span>{doc.size}</span>
+                            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+                            <span>{doc.date}</span>
+                        </div>
                     </div>
-                ) : (
-                    <span className="text-xs text-muted-foreground/50 italic">Not used in any course</span>
-                )}
-            </div>
 
-            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl" title="Preview">
-                    <Eye className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-xl" title="Download">
-                    <Download className="h-4 w-4" />
-                </Button>
-            </div>
-        </div>
+                    <div className="flex justify-center md:justify-start">
+                        {doc.linkedCourses.length > 0 ? (
+                            <Badge variant="secondary" className="bg-primary/5 hover:bg-primary/10 text-primary border-primary/20 font-medium text-[10px] pl-2 pr-3 py-1">
+                                <BookOpen className="w-3 h-3 mr-1.5" />
+                                {doc.linkedCourses.length} Linked
+                            </Badge>
+                        ) : (
+                            <span className="text-xs text-muted-foreground/50 italic px-2">Unused</span>
+                        )}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg">
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg">
+                            <Download className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     )
 }

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { ModeToggle } from "@/components/mode-toggle";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -136,7 +137,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         {/* Top Desktop Bar (Minimal - Notifications Only) */}
                         <div className="hidden lg:flex items-center justify-end px-6 py-4 gap-3">
                             <ModeToggle />
-                            <BellWithDropdown />
+                            <NotificationDropdown />
                             <Link to="/dashboard/profile">
                                 <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all">
                                     JD
@@ -168,8 +169,8 @@ function SidebarItem({ icon, label, to }: { icon: ReactNode, label: string, to: 
                 className={cn(
                     "w-full justify-start h-12 mb-1 px-4 font-medium transition-all duration-300 rounded-xl",
                     isActive
-                        ? "bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary/90"
-                        : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+                        ? "bg-gradient-to-r from-primary to-violet-600 text-white shadow-glow hover:opacity-90"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
             >
                 <span className={cn("mr-4 h-5 w-5", isActive ? "text-white" : "text-muted-foreground group-hover:text-foreground")}>{icon}</span>
@@ -179,77 +180,6 @@ function SidebarItem({ icon, label, to }: { icon: ReactNode, label: string, to: 
     )
 }
 
-function BellWithDropdown() {
-    const [isOpen, setIsOpen] = useState(false);
 
-    return (
-        <div className="relative">
-            <Button
-                variant="ghost"
-                size="icon"
-                className="relative bg-white/50 backdrop-blur-md hover:bg-white/80 rounded-full h-10 w-10 shadow-sm border border-white/50 transition-all"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white" />
-            </Button>
 
-            {isOpen && (
-                <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                    <div className="absolute right-0 mt-3 w-96 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right border border-border bg-popover text-popover-foreground">
-                        <div className="p-4 border-b border-border/50">
-                            <div className="flex items-center justify-between">
-                                <h3 className="font-bold text-base text-foreground">Notifications</h3>
-                                <span className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-semibold border border-primary/20">3 New</span>
-                            </div>
-                        </div>
-                        <div className="max-h-[400px] overflow-y-auto p-2">
-                            <NotificationItem
-                                title="New Lesson Added"
-                                time="2m ago"
-                                desc="Advanced Negotiation Strategies is now available."
-                                color="text-blue-500 dark:text-blue-400"
-                                bgColor="bg-blue-500/10"
-                                borderColor="border-blue-500/20"
-                            />
-                            <NotificationItem
-                                title="Assignment Graded"
-                                time="1h ago"
-                                desc="Your essay on 'Business Etiquette' scored 95%."
-                                color="text-green-500 dark:text-green-400"
-                                bgColor="bg-green-500/10"
-                                borderColor="border-green-500/20"
-                            />
-                            <NotificationItem
-                                title="System Alert"
-                                time="1d ago"
-                                desc="Scheduled maintenance on Saturday at 2:00 AM UTC."
-                                color="text-orange-500 dark:text-orange-400"
-                                bgColor="bg-orange-500/10"
-                                borderColor="border-orange-500/20"
-                            />
-                        </div>
-                        <div className="p-3 border-t border-border/50 bg-muted/30">
-                            <Button variant="ghost" size="sm" className="w-full text-sm h-9 text-muted-foreground font-medium hover:bg-muted/50 hover:text-foreground">
-                                Mark all as read
-                            </Button>
-                        </div>
-                    </div>
-                </>
-            )}
-        </div>
-    )
-}
 
-function NotificationItem({ title, time, desc, color, bgColor, borderColor }: { title: string, time: string, desc: string, color: string, bgColor: string, borderColor: string }) {
-    return (
-        <div className={cn("p-3 rounded-xl transition-all cursor-pointer group mb-2 border", bgColor, borderColor, "hover:shadow-sm")}>
-            <div className="flex justify-between items-start mb-1.5">
-                <span className={cn("font-semibold text-sm", color)}>{title}</span>
-                <span className="text-xs text-muted-foreground font-medium">{time}</span>
-            </div>
-            <p className="text-xs text-muted-foreground/80 leading-relaxed">{desc}</p>
-        </div>
-    )
-}

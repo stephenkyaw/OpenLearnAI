@@ -1,11 +1,14 @@
+
 import { useState } from "react";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
-    BookOpen, PlayCircle, Search, Filter,
-    LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight, ArrowRight, Clock, Award,
-    Code, Brain, Languages, Briefcase, Palette, Plus, Loader2
+    BookOpen, Search, Filter,
+    LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight,
+    Code, Brain, Languages, Briefcase, Palette, Plus, Loader2,
+    Clock, Award, PlayCircle, ArrowRight
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -78,32 +81,32 @@ export function MyCoursesPage() {
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 px-2">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 px-2 animate-fade-in">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">My Courses</h1>
                     <p className="text-muted-foreground">Manage and track your learning progress.</p>
                 </div>
                 <Link to="/dashboard/upload">
-                    <Button className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 font-semibold tracking-wide">
+                    <Button variant="premium" className="shadow-lg shadow-indigo-500/20 font-semibold tracking-wide">
                         <Plus className="h-4 w-4 mr-2" /> New Course
                     </Button>
                 </Link>
             </div>
 
             {/* Controls Section */}
-            <div className="space-y-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border/50">
+            <div className="space-y-6 animate-fade-in delay-100">
+                <Card className="flex flex-col md:flex-row justify-between items-center gap-4 p-4 border-border/50 bg-background/50 backdrop-blur-sm">
                     <div className="flex items-center gap-2 w-full md:w-auto">
                         <div className="relative flex-1 md:w-80">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search courses..."
-                                className="pl-10 bg-muted/50 border-input focus:bg-background transition-colors"
+                                className="pl-10 bg-muted/30 border-input/60 focus:bg-background transition-colors"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <Button variant="outline" size="icon" className="border-input hover:bg-muted/50">
+                        <Button variant="outline" size="icon" className="border-input/60 hover:bg-muted/50 rounded-xl">
                             <Filter className="h-4 w-4" />
                         </Button>
                     </div>
@@ -113,7 +116,7 @@ export function MyCoursesPage() {
                             variant={viewMode === 'grid' ? "secondary" : "ghost"}
                             size="icon"
                             onClick={() => setViewMode('grid')}
-                            className={viewMode === 'grid' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50"}
+                            className={cn("rounded-xl", viewMode === 'grid' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
                         >
                             <LayoutGrid className="h-4 w-4" />
                         </Button>
@@ -121,39 +124,24 @@ export function MyCoursesPage() {
                             variant={viewMode === 'list' ? "secondary" : "ghost"}
                             size="icon"
                             onClick={() => setViewMode('list')}
-                            className={viewMode === 'list' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50"}
+                            className={cn("rounded-xl", viewMode === 'list' ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50")}
                         >
                             <ListIcon className="h-4 w-4" />
                         </Button>
                     </div>
-                </div>
+                </Card>
 
                 <Tabs defaultValue="all" className="w-full" onValueChange={(val) => { setCurrentTab(val); setCurrentPage(1); }}>
-                    <TabsList className="mb-6 bg-transparent p-0 gap-4">
-                        <TabsTrigger
-                            value="all"
-                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
-                        >
-                            All Courses
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="active"
-                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
-                        >
-                            In Progress
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="completed"
-                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
-                        >
-                            Completed
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="generating"
-                            className="data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:border-border/50 border border-transparent rounded-full px-6 transition-all data-[state=active]:text-foreground text-muted-foreground"
-                        >
-                            Generating
-                        </TabsTrigger>
+                    <TabsList className="mb-6 bg-transparent p-0 gap-4 flex-wrap">
+                        {['all', 'active', 'completed', 'generating'].map((tab) => (
+                            <TabsTrigger
+                                key={tab}
+                                value={tab}
+                                className="capitalize data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary/20 border border-transparent rounded-full px-5 py-2 transition-all text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                            >
+                                {tab === 'all' ? 'All Courses' : tab}
+                            </TabsTrigger>
+                        ))}
                     </TabsList>
 
                     <TabsContent value={currentTab} className="mt-0">
@@ -169,16 +157,18 @@ export function MyCoursesPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center text-muted-foreground bg-card rounded-3xl border border-dashed border-border/50">
-                                <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                                <h3 className="text-lg font-semibold text-foreground">No courses found</h3>
-                                <p>Try adjusting your search or filters.</p>
+                            <div className="p-16 text-center text-muted-foreground bg-card rounded-3xl border border-dashed border-border/50 flex flex-col items-center">
+                                <div className="h-16 w-16 bg-muted/50 rounded-full flex items-center justify-center mb-6">
+                                    <BookOpen className="h-8 w-8 text-muted-foreground/50" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-foreground mb-2">No courses found</h3>
+                                <p className="max-w-sm mx-auto">Try adjusting your search criteria or create a new course to get started.</p>
                             </div>
                         )}
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-4 mt-10">
+                            <div className="flex justify-center items-center gap-4 mt-12">
                                 <Button
                                     variant="outline"
                                     size="icon"
@@ -215,9 +205,9 @@ function CourseGridItem({ course }: { course: any }) {
     const Icon = getCategoryIcon(course.category);
 
     return (
-        <div className="bg-card rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl transition-all duration-500 shadow-sm border border-border/50 hover:-translate-y-1 flex flex-col h-full hover:border-primary/20">
+        <Card className="rounded-3xl p-6 relative overflow-hidden group hover:shadow-xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-1 block h-full border-border/60">
             {/* Decorative Blur Blob */}
-            <div className={cn("absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-50 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
+            <div className={cn("absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-30 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex justify-between items-start mb-6">
@@ -225,7 +215,7 @@ function CourseGridItem({ course }: { course: any }) {
                         getCourseColor(course.iconColor))}>
                         <Icon className="h-7 w-7" />
                     </div>
-                    <span className="bg-card/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground shadow-sm border border-border/50">
+                    <span className="bg-white/80 dark:bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-muted-foreground border border-border/50">
                         {course.category}
                     </span>
                 </div>
@@ -256,10 +246,10 @@ function CourseGridItem({ course }: { course: any }) {
                             <span className="text-muted-foreground">Progress</span>
                             <span className="text-primary">{course.progress}%</span>
                         </div>
-                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--primary),0.3)]"
-                                style={{ width: `${course.progress}%` }}
+                                style={{ width: `${course.progress}% ` }}
                             />
                         </div>
                     </div>
@@ -285,7 +275,7 @@ function CourseGridItem({ course }: { course: any }) {
                     </Link>
                 </div>
             </div>
-        </div>
+        </Card>
     )
 }
 
@@ -295,9 +285,9 @@ function CourseListItem({ course }: { course: any }) {
     const Icon = getCategoryIcon(course.category);
 
     return (
-        <div className="bg-card rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-border/50 hover:shadow-xl transition-all duration-300 group hover:-translate-x-1 relative overflow-hidden hover:border-primary/20">
+        <Card className="rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-6 shadow-sm border border-border/60 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group hover:-translate-x-1 relative overflow-hidden">
             {/* Decorative Blur Blob */}
-            <div className={cn("absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-30 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
+            <div className={cn("absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-10 -mt-10 transition-colors opacity-20 pointer-events-none group-hover:scale-110 duration-500", course.color)} />
 
             <div className={cn("h-20 w-20 rounded-xl flex items-center justify-center shrink-0 shadow-md text-white relative z-10",
                 getCourseColor(course.iconColor))}>
@@ -309,7 +299,7 @@ function CourseListItem({ course }: { course: any }) {
                     <h3 className="font-bold text-lg group-hover:text-primary transition-colors truncate text-foreground">
                         {course.title}
                     </h3>
-                    <span className="inline-block px-3 py-1 bg-muted text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider rounded-full w-fit mx-auto sm:mx-0">
+                    <span className="inline-block px-3 py-1 bg-secondary text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider rounded-full w-fit mx-auto sm:mx-0">
                         {course.category}
                     </span>
                 </div>
@@ -325,10 +315,10 @@ function CourseListItem({ course }: { course: any }) {
                 </div>
 
                 <div className="flex items-center gap-4 max-w-sm mx-auto sm:mx-0">
-                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                         <div
                             className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.3)]"
-                            style={{ width: `${course.progress}%` }}
+                            style={{ width: `${course.progress}% ` }}
                         />
                     </div>
                     <span className="text-xs font-bold text-primary w-8 text-right">{course.progress}%</span>
@@ -339,7 +329,7 @@ function CourseListItem({ course }: { course: any }) {
                 <Link to={course.link} className={cn("block", course.status === 'generating' && "pointer-events-none")}>
                     <Button
                         disabled={course.status === 'generating'}
-                        className="w-full sm:w-40 rounded-xl shadow-md bg-card hover:bg-muted text-primary border border-input h-10 font-bold tracking-wide disabled:opacity-70 disabled:grayscale">
+                        className="w-full sm:w-40 rounded-xl shadow-sm bg-card hover:bg-muted text-primary border border-input h-10 font-bold tracking-wide disabled:opacity-70 disabled:grayscale">
                         {course.status === 'generating' ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Generating
@@ -348,6 +338,7 @@ function CourseListItem({ course }: { course: any }) {
                     </Button>
                 </Link>
             </div>
-        </div>
+        </Card>
     )
 }
+

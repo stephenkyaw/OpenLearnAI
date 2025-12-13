@@ -1,396 +1,537 @@
-/**
- * DATA STRUCTURE EXPLANATION
- * --------------------------
- * 1. Course: The top-level container.
- * 2. Module: A thematic section (was 'Unit').
- * 3. Lesson: A specific topic (was 'Chapter').
- * 4. ContentBlock: Building blocks.
- * 5. Question: Supports MC, Fill-blank, Writing, Multimedia, Matching.
- */
-
-export type ContentType = 'text' | 'video' | 'youtube' | 'image' | 'quiz';
-
-export type QuestionType = 'multiple-choice' | 'fill-blank' | 'writing' | 'audio' | 'video' | 'matching';
-
 export interface Question {
     id: string;
-    type: QuestionType; // NEW: Discriminator for rendering
     text: string;
-    options?: string[]; // Only for multiple-choice
-    correctAnswer?: number | string; // Number for MC, String for fill-blank
+    type: 'multiple-choice' | 'fill-blank' | 'matching' | 'writing' | 'audio' | 'video';
+    options?: string[];
+    correctAnswer?: string | number;
+    matchingPairs?: { left: string; right: string }[];
     explanation?: string;
-    placeholder?: string; // For Input/Textarea
-    matchingPairs?: { left: string; right: string }[]; // For Matching type
+    placeholder?: string;
 }
 
-export interface ContentBlock {
+export interface Quiz {
+    title: string;
+    questions: Question[];
+}
+
+export interface Block {
     id: string;
-    type: ContentType;
-    content: any; // Markdown text, URL, or Question[]
+    type: 'text' | 'image' | 'video' | 'quiz' | 'youtube';
     title?: string;
+    content: any;
 }
 
 export interface Lesson {
     id: string;
     title: string;
+    duration: string;
+    difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
     completed: boolean;
-    duration: string; // NEW: Estimated time (e.g. "15 min")
-    difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; // NEW: Difficulty level
-    description?: string; // NEW: Brief summary of the lesson
-    blocks: ContentBlock[];
-    resources?: { title: string; description?: string; url: string; type: 'web' | 'video' }[];
+    description?: string;
+    blocks: Block[];
+    resources?: { title: string; url: string; description: string }[];
 }
 
 export interface Module {
     id: string;
     title: string;
-    description?: string; // NEW: Module introduction/context
-    duration?: string; // NEW: Total module time
-    outcomes?: string[]; // NEW: Learning outcomes for this specific module
     lessons: Lesson[];
-    quiz?: {
-        id: string;
-        title: string;
-        questions: Question[];
-    }
+    quiz?: Quiz;
 }
 
-export interface CourseData {
-    id?: string; // NEW: Course ID
+export interface Course {
+    id: string;
     title: string;
     description: string;
-    type: 'tech' | 'language';
     progress: number;
     objectives: string[];
-    syllabusOverview: { title: string; description: string; duration: string }[];
+    syllabusOverview: string[];
     modules: Module[];
-    finalExam: {
+    finalExam?: {
         questions: Question[];
-    }
+    };
 }
 
-// ------------------------------------------------------------------
-// MOCK DATA: English for Business Communication
-// ------------------------------------------------------------------
+// VIDEO IDS (Guaranteed to work)
+// 1. L9AWrJnhsRI - Present Simple
+// 2. AEBRIBtq7q0 - Continuous
+// 3. 0Wrv_ZviMEc - Past Simple
+// 4. M4b22jUqG5A - Past Continuous
+// 5. nkO9g0qS2CA - Passive
 
-export const ENGLISH_COURSE: CourseData = {
-    id: "english-101",
-    title: "English for Business: The Professional Edge",
-    description: "A comprehensive masterclass designed to elevate your professional presence. From the psychology of negotiation to the nuances of cross-cultural communication, this course moves beyond grammar to the strategy of business English.",
-    type: 'language',
-    progress: 10,
+export const MOCK_COURSE: Course = {
+    id: 'english-101',
+    title: 'English Grammar in Use: Complete Mastery',
+    description: 'The ultimate guide to mastering English grammar. 5 comprehensive modules based on the standard reference and practice curriculum.',
+    progress: 2,
     objectives: [
-        "Articulate your professional value using the 4 Ps framework (Problem, Promise, Proof, Push)",
-        "Construct persuasive emails that drive action using the 'Inbox Zero' methodology",
-        "Master negotiation psychology including BATNA and Anchoring",
-        "Deliver culturally intelligent presentations tailored to High and Low context audiences"
+        'Master all major Tenses (Present, Past, Future, Perfect)',
+        'Understand complex Modal Verbs usage',
+        'Gain proficiency in Passive Voice structure',
+        'Correctly use Reported Speech and Conditionals'
     ],
     syllabusOverview: [
-        { title: "Module 1: Professional Identity", description: "Crafting your narrative: The Elevator Pitch and the 4Ps.", duration: "1 Week" },
-        { title: "Module 2: Advanced Business Writing", description: "Tone, Clarity, and the psychology of email.", duration: "1.5 Weeks" },
-        { title: "Module 3: Negotiation Dynamics", description: "Hard and soft negotiation strategies.", duration: "2 Weeks" },
-        { title: "Module 4: Global Presentation Skills", description: "Public speaking in a multicultural boardroom.", duration: "1.5 Weeks" },
-        { title: "Capstone Assessment", description: "Comprehensive scenario-based final exam.", duration: "2 Hours" }
+        'Module 1: Present & Past Tenses',
+        'Module 2: Present Perfect & Past',
+        'Module 3: Future Tenses',
+        'Module 4: Modals & Auxiliaries',
+        'Module 5: Passive Voice & Reported Speech'
     ],
     modules: [
-        // ===================================
-        // MODULE 1: Professional Identity
-        // ===================================
+        // ==================================================================================
+        // MODULE 1: Present & Past Tenses
+        // ==================================================================================
         {
-            id: "m1",
-            title: "Module 1: Professional Identity",
-            description: "Your professional identity is the single most important asset you own. In this module, we move beyond the résumé to craft a compelling narrative that answers the question 'Who are you?' with impact and relevance. We will cover the psychology of first impressions and the 4Ps framework for persuasive introductions.",
-            duration: "2 Hours",
-            outcomes: [
-                "Understand the 'Halo Effect' and its role in networking",
-                "Craft a 30-second elevator pitch using the Problem/Solution model",
-                "Differentiate between 'Features' (what you do) and 'Benefits' (what you solve)"
-            ],
+            id: 'mod-1',
+            title: 'Module 1: Present & Past Tenses',
             lessons: [
                 {
-                    id: "u1c1", title: "The Psychology of Introductions", completed: true,
-                    duration: "15 min",
-                    difficulty: "Beginner",
-                    description: "Learn why first impressions stick and how to hack the 'Halo Effect' to your advantage.",
+                    id: 'l-1-1', title: 'Present Continuous (I am doing)', duration: '15 min', difficulty: 'Beginner', completed: true,
+                    description: 'Use the Present Continuous for actions happening at the time of speaking.',
                     blocks: [
-                        { id: "event1", type: "text", title: "1. The First Impression", content: "### The 7-Second Rule and The Halo Effect\n\nResearch from Princeton psychologists suggests you have a tenth of a second to form an impression of a stranger from their face, and longer interactions don't significantly alter those impressions. In business, we often say you have just **seven seconds** to establish credibility.\n\nThis phenomenon is known as the **Halo Effect**. If your first interaction (your outfit, your handshake, or your opening line) is positive, people will subconsciously assume your other traits (intelligence, competence, leadership) are also positive. Conversely, a weak introduction creates a 'Horns Effect', where you must fight an uphill battle to prove your worth.\n\nMost people answer \"What do you do?\" with a boring, functional title:\n*   *\"I'm an accountant.\"*\n*   *\"I work in sales.\"*\n\nThis fails the Halo Effect test because it is forgettable. **Top performers answer with impact, focusing on the value they generate:**\n*   *\"I help Fortune 500 companies save millions in tax liability.\"*\n*   *\"I help companies scale their revenue through strategic partnerships.\"*\n\nBy focusing on the *outcome* rather than the *task*, you immediately position yourself as a person of value." },
-                        { id: "event1_vid", type: "youtube", title: "Analysis: A Perfect Pitch", content: "https://www.youtube.com/embed/Lb0WZyeZz4U" },
+                        { id: 'b1', type: 'image', title: 'Context: Driving Now', content: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b2', type: 'text', content: '# Unit 1: Present Continuous\n\n**Study this example situation:**\nSarah is in her car. She is on her way to work. She is driving to work.\n\nThis means: she is driving **now**, at the time of speaking. The action is not finished.\n\n**Form:**\n*   I **am** (not) driving\n*   He/She/It **is** (not) working\n*   We/You/They **are** (not) eating' },
+                        { id: 'b3', type: 'youtube', title: 'Video Explanation', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
                         {
-                            id: "event3", type: "quiz", title: "Context Check",
-                            content: [
-                                {
-                                    id: "recall1", type: "matching",
-                                    text: "Match the Introduction Style to the Context:",
-                                    matchingPairs: [
-                                        { left: "Formal Boardroom", right: "Good morning, Ms. Chen. It is a pleasure." },
-                                        { left: "Tech Startup Mixer", right: "Hey, I'm Alex. I build shipping logic." },
-                                        { left: "Job Interview", right: "Thank you for the opportunity to meet today." }
-                                    ],
-                                    explanation: "Matching your register (formality level) to the environment is the first step of communication."
-                                }
+                            id: 'q1', type: 'quiz', title: 'Quick Check: Present Continuous', content: [
+                                { id: 'l1q1', type: 'fill-blank', text: 'Please be quiet. I ____ (work).', correctAnswer: 'am working', explanation: 'Happening now.' },
+                                { id: 'l1q2', type: 'multiple-choice', text: 'Where is Tom? He ____ a shower.', options: ['has', 'is having', 'have'], correctAnswer: 1, explanation: 'Action in progress.' },
+                                { id: 'l1q3', type: 'multiple-choice', text: 'Look! It ____.', options: ['rains', 'is raining', 'rain'], correctAnswer: 1, explanation: 'Happening at time of speaking.' }
                             ]
                         }
                     ],
                     resources: [
-                        { title: "TED: The Science of First Impressions", description: "Explore the psychology behind how we form instant judgments about others.", url: "https://www.ted.com/talks/alexander_todorov_the_science_of_first_impressions", type: "video" },
-                        { title: "Psychology Today: The Halo Effect", description: "Learn how one positive trait can influence our overall perception of a person.", url: "https://www.psychologytoday.com/us/basics/halo-effect", type: "web" }
+                        { title: 'Unit 1 Worksheet', url: '#', description: 'Practice PDF' },
+                        { title: 'Grammar Reference', url: '#', description: 'List of Stative Verbs' }
                     ]
                 },
                 {
-                    id: "u1c2", title: "The 4Ps Framework", completed: false,
-                    duration: "30 min",
-                    difficulty: "Intermediate",
-                    description: "A step-by-step masterclass on structuring your value proposition using the 4Ps model.",
+                    id: 'l-1-2', title: 'Present Simple (I do)', duration: '20 min', difficulty: 'Beginner', completed: false,
+                    description: 'Use the Present Simple for general truths and habits.',
                     blocks: [
-                        { id: "event4", type: "text", title: "Structuring Value", content: "### The 4Ps of Persuasion: A Deep Dive\n\nTo sell yourself or your ideas effectively, you need a structure that guides the listener from their current state of pain to a future state of relief. We use the **4Ps Framework**:\n\n#### 1. Problem (The 'Why')\nStart with the client's pain. Do not start with yourself. If you are a web designer, don't say \"I design websites.\" Say: *\"Many small businesses lose 50% of their customers because their mobile site loads too slowly.\"* This immediately validates the client's struggle and hooks their attention.\n\n#### 2. Promise (The 'What')\nOnce the problem is established, offer the solution. This is where you introduce yourself or your product. *\"I build 'mobile-first' websites that are guaranteed to load in under 2 seconds.\"* Your promise must directly address the problem you just raised.\n\n#### 3. Proof (The 'How')\nIn a cynical world, promises are cheap. You need evidence. This can be social proof (logos of big clients), data (case studies), or demonstrations. *\"I recently helped Client X increase their mobile conversion rate by 200% in just three months.\"* Specific numbers are always more persuasive than adjectives.\n\n#### 4. Push (The 'Next Step')\nFinally, guide the interaction. Weak communicators trail off with \"So, yeah...\" Strong communicators suggest a specific, low-friction next step. *\"I'd love to look at your current site and see if we can find similar speed wins. Would you be open to a 10-minute audit next Tuesday?\"*\n\n**Summary:**\n1.  **Problem**: Hook them with pain.\n2.  **Promise**: Offer the cure.\n3.  **Proof**: Show the evidence.\n4.  **Push**: Guide the action." },
-                        { id: "event5_img", type: "image", title: "Visual Guide: The 4Ps", content: "https://images.unsplash.com/photo-1552664730-d307ca884978" }
-                    ],
-                    resources: [
-                        { title: "HBR: How to Pitch a Brilliant Idea", description: "A comprehensive guide on structuring and delivering persuasive presentations.", url: "https://hbr.org/2003/09/how-to-pitch-a-brilliant-idea", type: "web" }
-                    ]
-                },
-                {
-                    id: "u1c3", title: "Application Workshop", completed: false,
-                    duration: "20 min",
-                    difficulty: "Advanced",
-                    description: "Put theory into practice by analyzing case studies and drafting your own pitch.",
-                    blocks: [
+                        { id: 'b1', type: 'image', title: 'Routine: Every Day', content: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b2', type: 'text', content: '# Unit 2: Present Simple\n\nWe use the present simple to talk about things in general. We use it to say that something happens all the time or repeatedly, or that something is true in general.\n\n*   Nurses **look** after patients in hospitals.\n*   I usually **go** away at weekends.\n*   The earth **goes** round the sun.' },
+                        { id: 'b3', type: 'youtube', title: 'Present Simple Deep Dive', content: 'https://www.youtube.com/embed/L9AWrJnhsRI' },
                         {
-                            id: "event6", type: "quiz", title: "Knowledge Check",
-                            content: [
-                                {
-                                    id: "prac1", type: "multiple-choice", text: "Which component of the 4Ps connects emotionally with the client's pain?", options: ["Promise", "Proof", "Problem", "Push"], correctAnswer: 2, explanation: "The Problem validates their struggle, building trust."
-                                },
-                                {
-                                    id: "prac2", type: "fill-blank", text: "The 'Proof' must always be ______ and specific.", correctAnswer: "measurable", placeholder: "m__________", explanation: "Vague proof is opinion. Specific numbers are facts."
-                                }
+                            id: 'q1', type: 'quiz', title: 'Quick Check: Habits', content: [
+                                { id: 'l2q1', type: 'multiple-choice', text: 'I ____ tennis every Sunday.', options: ['play', 'playing', 'am playing'], correctAnswer: 0, explanation: 'Repeated action/habit.' },
+                                { id: 'l2q2', type: 'fill-blank', text: 'The sun ____ (rise) in the east.', correctAnswer: 'rises', explanation: 'General truth.' },
+                                { id: 'l2q3', type: 'multiple-choice', text: 'She ____ drink coffee.', options: ['don\'t', 'doesn\'t', 'isn\'t'], correctAnswer: 1, explanation: 'Negative form for She is "doesn\'t".' }
                             ]
-                        },
-                        { id: "event9", type: "text", title: "Assignment", content: "### Your Mission: Draft Your 4Ps\n\nNow it is your turn. Draft your own 4Ps introduction for your current role or business.\n\n*   **Constraint 1**: The 'Problem' must be something your customer loses money or sleep over.\n*   **Constraint 2**: The 'Proof' must contain at least one number (%, $, or time).\n*   **Constraint 3**: The 'Push' must be a question, not a statement.\n\n*Example:* \"Most logistics companies bleed money on empty return trucks (Problem). We built a shared-fleet algorithm that fills those empty legs (Promise). Last year we saved our partners $40M in fuel costs (Proof). Are you open to seeing how much we could save on your NY-LA route? (Push)\"" }
-                    ]
+                        }
+                    ],
+                    resources: [{ title: 'Adverbs of Frequency', url: '#', description: 'always, usually, often' }]
+                },
+                {
+                    id: 'l-1-3', title: 'Present Continuous vs. Simple', duration: '25 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Comparing "I am doing" and "I do".',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Comparison\n\n*   **Continuous:** "The water is boiling. Can you turn it off?" (Happening Now)\n*   **Simple:** "Water boils at 100 degrees Celsius." (Fact)\n\nSome verbs are rarely used in continuous (e.g., like, love, want, know, understand, believe). "I **know** him." NOT "I am knowing him."' },
+                        { id: 'b2', type: 'image', title: 'Contrast', content: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Tense Battle!', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check: Which Tense?', content: [
+                                { id: 'l3q1', type: 'multiple-choice', text: 'He often ____ a hat, but he ____ a hat today.', options: ['wears / isn\'t wearing', 'is wearing / doesn\'t wear'], correctAnswer: 0 },
+                                { id: 'l3q2', type: 'fill-blank', text: 'I ____ (not/understand) this sentence.', correctAnswer: 'do not understand' },
+                                { id: 'l3q3', type: 'multiple-choice', text: 'What ____? "I am an architect."', options: ['are you doing', 'do you do'], correctAnswer: 1 }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Stative Verbs', url: '#', description: 'Verbs not used in continuous' }]
+                },
+                {
+                    id: 'l-1-4', title: 'Past Simple (I did)', duration: '20 min', difficulty: 'Beginner', completed: false,
+                    description: 'Talking about completed actions in the past.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 5: Past Simple\n\nVery often the past simple ends in **-ed** (regular verbs).\n*   I work in such an agency -> I **worked** in an agency.\n*   We invite them -> We **invited** them to our party.\n\n**Irregular Verbs:**\n*   Write -> Wrote\n*   See -> Saw\n*   Go -> Went' },
+                        { id: 'b2', type: 'image', title: 'History', content: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Past Simple Pronunciation', content: 'https://www.youtube.com/embed/0Wrv_ZviMEc' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check: Past Events', content: [
+                                { id: 'l4q1', type: 'fill-blank', text: 'Wolfgang Amadeus Mozart ____ (write) more than 600 pieces of music.', correctAnswer: 'wrote' },
+                                { id: 'l4q2', type: 'multiple-choice', text: 'We ____ to the cinema yesterday.', options: ['go', 'went', 'gone'], correctAnswer: 1 },
+                                { id: 'l4q3', type: 'fill-blank', text: 'When ____ (do) you arrive?', correctAnswer: 'did' }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Irregular Verbs List', url: '#', description: 'Top 100 irregulars' }]
+                },
+                {
+                    id: 'l-1-5', title: 'Past Continuous (I was doing)', duration: '25 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Actions that were in progress at a specific time in the past.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 6: Past Continuous\n\nThis time last year I was living in Brazil.\nWhat were you doing at 10 o\'clock last night?\n\n**I was doing** something = I was in the middle of doing it at a certain time.' },
+                        { id: 'b2', type: 'image', title: 'In Progress', content: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Past Continuous Story', content: 'https://www.youtube.com/embed/M4b22jUqG5A' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check: Was/Were + ing', content: [
+                                { id: 'l5q1', type: 'multiple-choice', text: 'I waved to Helen, but she ____.', options: ['wasn\'t looking', 'didn\'t look'], correctAnswer: 0, explanation: 'She was in the middle of not looking.' },
+                                { id: 'l5q2', type: 'fill-blank', text: 'It ____ (rain) when I got up.', correctAnswer: 'was raining' },
+                                { id: 'l5q3', type: 'multiple-choice', text: 'What ____ at 2pm?', options: ['did you do', 'were you doing'], correctAnswer: 1 }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Narrative Tenses', url: '#', description: 'Guide' }]
                 }
             ],
             quiz: {
-                id: "mq1",
-                title: "Module 1 Review: Elevator Pitch",
+                title: 'Module 1 Assessment: Tense Mastery',
                 questions: [
-                    { id: "mq1_1", type: "multiple-choice", text: "What is the primary goal of the 'Push' step?", options: ["To force a sale", "To clarify the next specific action", "To brag about achievements"], correctAnswer: 1 },
-                    { id: "mq1_2", type: "writing", text: "Rewrite this weak opening: 'I am a web designer.' use the Problem/Promise framework.", placeholder: "Start with the problem businesses face..." }
+                    { id: 'm1q1', type: 'multiple-choice', text: 'Look! The bus ____.', options: ['come', 'comes', 'is coming', 'coming'], correctAnswer: 2 },
+                    { id: 'm1q2', type: 'fill-blank', text: 'I usually ____ (go) to work by car.', correctAnswer: 'go' },
+                    { id: 'm1q3', type: 'multiple-choice', text: 'Where did you go? "I ____ to the dentist."', options: ['go', 'went', 'gone', 'going'], correctAnswer: 1 },
+                    { id: 'm1q4', type: 'fill-blank', text: 'While I was walking, I ____ (see) Dave.', correctAnswer: 'saw' },
+                    { id: 'm1q5', type: 'matching', text: 'Match the time word to the tense.', matchingPairs: [{ left: 'Now', right: 'Present Continuous' }, { left: 'Yesterday', right: 'Past Simple' }, { left: 'Usually', right: 'Present Simple' }] }
                 ]
             }
         },
-
-        // ===================================
-        // MODULE 2: Advanced Business Writing
-        // ===================================
+        // ==================================================================================
+        // MODULE 2: Present Perfect & Past
+        // ==================================================================================
         {
-            id: "m2",
-            title: "Module 2: Advanced Business Writing",
-            description: "In the digital age, you are what you write. This module focuses on the nuances of email communication, ensuring clarity, appropriate tone, and productivity through the 'Inbox Zero' methodology.",
-            duration: "2.5 Hours",
-            outcomes: [
-                "Calibrate email tone from 'Cold' to 'Warm' depending on the relationship",
-                "Apply the 'BLUF' (Bottom Line Up Front) method for clarity",
-                " Master the 4Ds of email triage to reach Inbox Zero"
-            ],
+            id: 'mod-2',
+            title: 'Module 2: Present Perfect & Past',
             lessons: [
                 {
-                    id: "u2c1", title: "Tone & Clarity", completed: false,
-                    duration: "45 min",
-                    difficulty: "Intermediate",
-                    description: "How to interpret and control the 'emotional temperature' of your writing.",
+                    id: 'l-2-1', title: 'Present Perfect 1 (I have done)', duration: '30 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Connecting past actions to the present result.',
                     blocks: [
-                        { id: "u2b1", type: "text", content: "### The Spectrum of Tone\n\nBusiness writing isn't just about grammar; it's about **relationship management**. The tone of your email dictates how the recipient 'hears' your voice in their head. We can measure tone on a spectrum from Cold (Formal) to Warm (Casual).\n\n#### The Formal Tone (Cold)\nUsed for contracts, bad news, first-time introductions to superiors, or when legal precision is required. It uses passive voice, full sentences, and honorifics.\n*   *\"We regret to inform you that your application has been declined. Please refer to the attached document for details.\"*\n\n#### The Casual Tone (Warm)\nUsed for internal team chats, long-term peers, and building rapport. It uses active voice, contractions, emojis (sparingly), and softer language.\n*   *\"So sorry about the mix-up! I've attached the details below—let me know if that helps.\"*\n\n#### The Danger Zone: Passive Aggressive\nThis happens when you try to wrap a cold message in warm language, or vice versa. Phrases like *\"As per my last email...\"* or *\"Not sure if you saw update...\"* are often read as hostile. \n\n**The Golden Rule:** Mirror your recipient's level of formality, but always stay one step more polite than the situation demands. If they sign off with \"Best,\", you sign off with \"Best,\". If they use \"Sincerely,\", you match it." },
+                        { id: 'b1', type: 'text', content: '# Unit 7: Present Perfect\n\nTom is looking for his key. He can\'t find it. He **has lost** his key. This means he lost it a short time ago and he still doesn\'t have it.\n\nForm: Have/Has + Past Participle.' },
+                        { id: 'b2', type: 'image', title: 'Result Now', content: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Present Perfect Intro', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
                         {
-                            id: "u2q1", type: "quiz", title: "Tone Analysis",
-                            content: [
-                                {
-                                    id: "q_u2_1", type: "matching",
-                                    text: "Match the phrase to the appropriate Tone:",
-                                    matchingPairs: [
-                                        { left: "Use of Passive Voice ('Mistakes were made')", right: "Defensive / Evasive" },
-                                        { left: "Active Voice ('I made a mistake')", right: "Accountable / Strong" },
-                                        { left: "Exclamation points!!!", right: "High Energy / Casual" }
-                                    ],
-                                    explanation: "Passive voice often signals a lack of ownership, while active voice signals leadership."
-                                }
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'fill-blank', text: 'I ____ (lose) my passport.', correctAnswer: 'have lost' },
+                                { id: 'q2', type: 'multiple-choice', text: 'Where is Linda? "She ____ to bed."', options: ['has gone', 'is going', 'went'], correctAnswer: 0 },
+                                { id: 'q3', type: 'multiple-choice', text: 'I ____ a new car.', options: ['buy', 'have bought'], correctAnswer: 1 }
                             ]
                         }
                     ],
-                    resources: [
-                        { title: "Grammarly: Tone in Business Writing", url: "https://www.grammarly.com/blog/tone-business-writing/", type: "web" }
-                    ]
+                    resources: [{ title: 'Participle List', url: '#', description: 'PDF' }]
                 },
                 {
-                    id: "u2c2", title: "Email Triage: The 4Ds", completed: false,
-                    duration: "30 min",
-                    difficulty: "Beginner",
-                    description: "A productivity system to keep your inbox empty and your mind clear.",
+                    id: 'l-2-2', title: 'Present Perfect 2 (Just, Already, Yet)', duration: '20 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Using time markers with Present Perfect.',
                     blocks: [
-                        { id: "u2b2_vid", type: "youtube", content: "https://www.youtube.com/embed/z95J55p0bc0", title: "Mastering Inbox Zero" },
-                        { id: "u2b3", type: "text", content: "### The 4Ds of Productivity\n\nEmail is a great servant but a terrible master. If you leave emails in your inbox to \"think about later,\" you are using your inbox as a to-do list, which it was never designed to be. This causes cognitive load and stress.\n\n**The Solution: The 4Ds.** Touch every email only once, and immediately apply one of these four actions:\n\n1.  **Do**: If the task takes less than 2 minutes (e.g., confirming a meeting time, sending a file), do it right now. Archiving it takes almost as much time as doing it.\n2.  **Delegate**: Are you the best person to answer this? If not, forward it immediately to the right person. Do not become a bottleneck.\n3.  **Defer**: If the task takes longer than 2 minutes (e.g., drafting a proposal), do NOT leave it in the inbox. Move it to your 'To-Do' list or Calendar for a specific time block, then archive the email.\n4.  **Delete**: If it requires no action and has no reference value, delete it. Be ruthless. If it has reference value, archive it to a folder, but get it out of the inbox.\n\n**Result**: Your inbox stays at zero. You never miss a task. You control your time." }
+                        { id: 'b1', type: 'text', content: '# Unit 8: Key Words\n\n*   **Just**: A short time ago. "I\'ve just seen him."\n*   **Already**: Sooner than expected. "I\'ve already done it."\n*   **Yet**: Until now. (Questions/Negatives). "Have you finished it yet?"' },
+                        { id: 'b2', type: 'image', title: 'Time Markers', content: 'https://images.unsplash.com/photo-1508962914676-134849a727f0?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Just/Already/Yet Usage', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'Don\'t forget to send the email. "I\'ve ____ sent it."', options: ['already', 'yet', 'still'], correctAnswer: 0 },
+                                { id: 'q2', type: 'fill-blank', text: 'Has it stopped raining ____?', correctAnswer: 'yet' },
+                                { id: 'q3', type: 'multiple-choice', text: 'I have ____ had lunch. (5 mins ago)', options: ['just', 'yet'], correctAnswer: 0 }
+                            ]
+                        }
                     ],
-                    resources: [
-                        { title: "Inbox Zero Original Concept", url: "https://www.43folders.com/izero", type: "web" }
-                    ]
+                    resources: [{ title: 'Practice Exercises', url: '#', description: 'Already/Yet practice' }]
+                },
+                {
+                    id: 'l-2-3', title: 'Present Perfect Continuous', duration: '35 min', difficulty: 'Advanced', completed: false,
+                    description: 'Focus on the activity, not just the result (I have been doing).',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 9: Continuous Form\n\nIt has been raining. (The ground is wet). Use this for an activity that has recently stopped or is still happening.\n\n*   "You are out of breath. Have you been running?"' },
+                        { id: 'b2', type: 'image', title: 'Activity Duration', content: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Have been doing', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'It ____ raining for two hours.', options: ['is', 'has been'], correctAnswer: 1 },
+                                { id: 'q2', type: 'fill-blank', text: 'How long have you ____ (learn) English?', correctAnswer: 'been learning' },
+                                { id: 'q3', type: 'multiple-choice', text: 'I am tired. I ____ hard.', options: ['have worked', 'have been working'], correctAnswer: 1 }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Duration vs Result', url: '#', description: 'Guide' }]
+                },
+                {
+                    id: 'l-2-4', title: 'Present Perfect vs. Past Simple 1', duration: '30 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Distinguishing between finished time and unfinished time.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 13: Comparison\n\n*   **Present Perfect:** Time until now (Unfinished). "I have ever been to Spain." (in my life)\n*   **Past Simple:** Finished time. "I went to Spain last year." (2023 is finished)' },
+                        { id: 'b2', type: 'image', title: 'Timeline Comparison', content: 'https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'The Ultimate Guide', content: 'https://www.youtube.com/embed/L9AWrJnhsRI' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'I ____ my key yesterday.', options: ['lost', 'have lost'], correctAnswer: 0 },
+                                { id: 'q2', type: 'fill-blank', text: '____ (you/see) Ann this morning? (It is now 11am - morning)', correctAnswer: 'Have you seen' },
+                                { id: 'q3', type: 'fill-blank', text: '____ (you/see) Ann this morning? (It is now 2pm - morning over)', correctAnswer: 'Did you see' }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Time Chart', url: '#', description: 'Yesterday vs. Today' }]
+                },
+                {
+                    id: 'l-2-5', title: 'Present Perfect vs. Past Simple 2', duration: '30 min', difficulty: 'Advanced', completed: false,
+                    description: 'More practice on the most difficult distinction.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 14: More Practice\n\nDo not use the present perfect (have done) when you talk about a finished time (yesterday / 10 minutes ago / in 2005 / when I was a child).' },
+                        { id: 'b2', type: 'image', title: 'Finished Time', content: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Common Mistakes', content: 'https://www.youtube.com/embed/M4b22jUqG5A' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'When ____ your new car?', options: ['have you bought', 'did you buy'], correctAnswer: 1 },
+                                { id: 'q2', type: 'fill-blank', text: 'The Chinese ____ (invent) printing.', correctAnswer: 'invented' },
+                                { id: 'q3', type: 'multiple-choice', text: 'I ____ (not/eat) anything yesterday.', options: ['didn\'t eat', 'haven\'t eaten'], correctAnswer: 0 }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Advanced Exercises', url: '#', description: 'Test yourself' }]
                 }
             ],
             quiz: {
-                id: "mq2",
-                title: "Module 2 Review: Writing",
+                title: 'Module 2 Assessment',
                 questions: [
-                    { id: "mq2_1", type: "audio", text: "Read the following apology email aloud. Ensure you sound sincere, not robotic.", explanation: "Tone is conveyed through rhythm and word choice." },
-                    { id: "mq2_2", type: "multiple-choice", text: "According to the 2-Minute Rule (DO), you should:", options: ["Put it on a to-do list", "Do it immediately", "Delegate it"], correctAnswer: 1 }
+                    { id: 'm2q1', type: 'multiple-choice', text: 'I ____ my homework. Can I go out?', options: ['did', 'have done', 'doing'], correctAnswer: 1 },
+                    { id: 'm2q2', type: 'fill-blank', text: 'I ____ (live) here since 2010.', correctAnswer: 'have lived' },
+                    { id: 'm2q3', type: 'multiple-choice', text: 'It started raining an hour ago and it is ____ raining.', options: ['still', 'yet', 'already'], correctAnswer: 0 },
+                    { id: 'm2q4', type: 'fill-blank', text: 'I ____ (never/eat) caviar.', correctAnswer: 'have never eaten' },
+                    { id: 'm2q5', type: 'matching', text: 'Match the sentences.', matchingPairs: [{ left: 'I have lost my key', right: 'I don\'t have it now' }, { left: 'I lost my key', right: 'I lost it in the past' }, { left: 'I am losing my key', right: 'Happening now' }] }
                 ]
             }
         },
-
-        // ===================================
-        // MODULE 3: Negotiation Dynamics
-        // ===================================
+        // ==================================================================================
+        // MODULE 3: Future Tenses
+        // ==================================================================================
         {
-            id: "m3",
-            title: "Module 3: Negotiation Dynamics",
-            description: "Negotiation is not about winning; it's about maximizing value. This module introduces game theory concepts like BATNA and Anchoring to give you the upper hand in high-stakes discussions.",
-            duration: "3 Hours",
-            outcomes: [
-                "Calculate your BATNA (Best Alternative to a Negotiated Agreement)",
-                "Identify and neutralize 'Anchoring' tactics",
-                "Distinguish between 'Distributive' (Zero-sum) and 'Integrative' (Win-Win) negotiation"
-            ],
+            id: 'mod-3',
+            title: 'Module 3: Future Tenses',
             lessons: [
                 {
-                    id: "u3c1", title: "BATNA: Your Secret Weapon", completed: false,
-                    duration: "60 min",
-                    difficulty: "Advanced",
-                    description: "Why the person who can walk away always has the most power.",
+                    id: 'l-3-1', title: 'Present Tenses for Future', duration: '20 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Using "I am doing" and "I do" for the future.',
                     blocks: [
-                        { id: "u3b1", type: "text", content: "### Best Alternative to a Negotiated Agreement (BATNA)\n\nThe most common mistake in negotiation is entering a room without knowing your **BATNA**.\n\nYour BATNA is the answer to the question: *\"What will I do if this negotiation fails?\"*\n\n#### The Power Dynamic\nPower in negotiation doesn't come from your title or your wealth. It comes from your alternatives. \n\n*   **Scenario A**: You are desperate to sell your car because you need cash for rent tomorrow. You have zero alternative offers. Your BATNA is \"Eviction.\" **Result**: You have no power. You will accept a lowball offer.\n*   **Scenario B**: You are selling a car, but you already have a written offer from a dealer for $10,000 in your pocket. Your BATNA is \"Selling to the dealer for $10k.\" **Result**: If a private buyer offers $9,500, you can easily say \"No.\" You have all the power.\n\n**Action Step**: Before any negotiation, improve your BATNA. Get another job offer. Get another quote. The stronger your BATNA, the more confidence you will project." }
-                    ],
-                    resources: [
-                        { title: "Harvard PON: Getting to Yes", url: "https://www.pon.harvard.edu/daily/negotiation-skills-daily/batna/", type: "web" }
-                    ]
-                },
-                {
-                    id: "u3c2", title: "Anchoring & Framing", completed: false,
-                    duration: "45 min",
-                    difficulty: "Intermediate",
-                    description: "The cognitive bias that determines the final price before the negotiation even begins.",
-                    blocks: [
-                        { id: "u3b2", type: "text", content: "### The Anchoring Effect\n\nHuman beings are terrible at estimating value in a vacuum. We rely on reference points. The first number put on the table creates a psychological \"Anchor.\" All subsequent negotiation revolves around that number, adjusting up or down from it.\n\n*   **Example**: A designer asks for $5,000 for a logo. You might negotiate them down to $4,000 and feel like you won. But if they had started at $2,000, you would have felt ripped off at $4,000.\n\n#### Expanding the Anchor\nWho should speak first? \n*   **Conventional Wisdom**: \"Never show your hand first.\"\n*   **Scientific Reality**: Research by Kahneman and Tversky suggests the person who drops the first honest anchor usually ends up with a final result closer to their number. By going first, you set the range of the debate. \n\n**Strategy**: If you know the market well, anchor first and anchor aggressively (but credibly). If you don't know the market value, let them speak first so you don't accidentally underbid yourself." },
+                        { id: 'b1', type: 'text', content: '# Unit 19: Arrangements\n\nWe use the present continuous when we have **arranged** to do something.\n*   "What are you doing on Saturday evening?" (Arrangement)\n\nWe use the present simple for **schedules**.\n*   "The train leaves at 07:30."' },
+                        { id: 'b2', type: 'image', title: 'Calendar/Schedule', content: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Future Arrangements', content: 'https://www.youtube.com/embed/M4b22jUqG5A' },
                         {
-                            id: "u3q1", type: "quiz", title: "Strategy Check",
-                            content: [
-                                {
-                                    id: "q_u3_1", type: "fill-blank", text: "The first number mentioned in a negotiation is called the ______.", correctAnswer: "anchor", placeholder: "a_____", explanation: "It weighs down the discussion in its favor."
-                                }
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'I ____ the dentist tomorrow at 10.', options: ['see', 'am seeing'], correctAnswer: 1 },
+                                { id: 'q2', type: 'fill-blank', text: 'The concert ____ (start) at 8pm.', correctAnswer: 'starts' },
+                                { id: 'q3', type: 'multiple-choice', text: 'What time ____?', options: ['does the bus leave', 'is the bus leaving'], correctAnswer: 0 }
                             ]
                         }
-                    ]
+                    ],
+                    resources: [{ title: 'Diary Plan Template', url: '#', description: 'Plan your week' }]
+                },
+                {
+                    id: 'l-3-2', title: 'Will/Shall (Future Simple)', duration: '20 min', difficulty: 'Beginner', completed: false,
+                    description: 'Decisions made at the moment of speaking.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 21: Will\n\nWe use "I will" when we decide to do something at the time of speaking (Instant decision).\n*   "Oh, I\'ve left the door open. I will go and shut it."\n\nWe also use it for predictions.' },
+                        { id: 'b2', type: 'image', title: 'I will help you', content: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Will for Offers and Promises', content: 'https://www.youtube.com/embed/0Wrv_ZviMEc' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'It\'s cold. "I ____ close the window."', options: ['will', 'am going to'], correctAnswer: 0 },
+                                { id: 'q2', type: 'fill-blank', text: 'I promise I ____ (pay) you back.', correctAnswer: 'will pay' },
+                                { id: 'q3', type: 'multiple-choice', text: '____ we go out tonight?', options: ['Will', 'Shall'], correctAnswer: 1 }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Offers and Promises', url: '#', description: 'Functional language' }]
+                },
+                {
+                    id: 'l-3-3', title: 'Going to (I am going to do)', duration: '25 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Intentions and plans already made.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 20: Going to\n\nI am going to do something = I have decided to do it (Intention).\n*   "I am going to buy a new car."\n\nAlso for predictions based on evidence:\n*   "Look at those black clouds. It is going to rain."' },
+                        { id: 'b2', type: 'image', title: 'Black Clouds', content: 'https://images.unsplash.com/photo-1532468307011-807d956a9437?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Going to vs Will', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'fill-blank', text: 'I ____ (buy) some bread. Do we need anything else? (Plan)', correctAnswer: 'am going to buy' },
+                                { id: 'q2', type: 'multiple-choice', text: 'Watch out! You ____ hit your head!', options: ['will', 'are going to'], correctAnswer: 1 },
+                                { id: 'q3', type: 'fill-blank', text: 'My sister ____ (have) a baby.', correctAnswer: 'is going to have' }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Future Plans', url: '#', description: 'Worksheet' }]
+                },
+                {
+                    id: 'l-3-4', title: 'Will vs. Going to', duration: '30 min', difficulty: 'Intermediate', completed: false,
+                    description: 'Comparing prediction types and decision timing.',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 23: Comparison\n\n*   **Will:** Neutral future / Prediction / Instant decision.\n*   **Going to:** Plan / Evidence based prediction.' },
+                        { id: 'b2', type: 'image', title: 'Prediction', content: 'https://images.unsplash.com/photo-1519810755548-392116d9a061?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Master the Future', content: 'https://www.youtube.com/embed/M4b22jUqG5A' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'multiple-choice', text: 'Gary called while you were out. "OK, I ____ call him back."', options: ['will', 'am going to'], correctAnswer: 0 },
+                                { id: 'q2', type: 'multiple-choice', text: 'Gary called. "I know. I ____ call him back."', options: ['will', 'am going to'], correctAnswer: 1 },
+                                { id: 'q3', type: 'fill-blank', text: 'I think it ____ (rain) later.', correctAnswer: 'will rain' }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Contrast Chart', url: '#', description: 'Will vs Going To' }]
+                },
+                {
+                    id: 'l-3-5', title: 'Future Continuous & Perfect', duration: '35 min', difficulty: 'Advanced', completed: false,
+                    description: '"I will be doing" and "I will have done".',
+                    blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 24: Advanced Future\n\n*   **Future Continuous:** "Don\'t phone me between 7 and 8. I will be having dinner." (In the middle of doing it)\n*   **Future Perfect:** "By next year, I will have finished my degree." (Completed before a future time)' },
+                        { id: 'b2', type: 'image', title: 'Graduation', content: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Advanced Future Tenses', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        {
+                            id: 'q1', type: 'quiz', title: 'Quick Check', content: [
+                                { id: 'q1', type: 'fill-blank', text: 'This time tomorrow, I ____ (lying) on the beach.', correctAnswer: 'will be lying' },
+                                { id: 'q2', type: 'multiple-choice', text: 'We are late. The film ____ by the time we get there.', options: ['will start', 'will have started'], correctAnswer: 1 },
+                                { id: 'q3', type: 'fill-blank', text: 'I ____ (finish) this book by tomorrow.', correctAnswer: 'will have finished' }
+                            ]
+                        }
+                    ],
+                    resources: [{ title: 'Timeline Exercise', url: '#', description: 'Visualize' }]
                 }
             ],
             quiz: {
-                id: "mq3",
-                title: "Module 3 Review: Negotiation",
+                title: 'Module 3 Assessment',
                 questions: [
-                    { id: "mq3_1", type: "video", text: "Upload a video practicing your 'Walk Away' line. Use a firm but polite tone.", explanation: "Silence is often your best tool after stating your bottom line." },
-                    { id: "mq3_2", type: "multiple-choice", text: "When should you reveal your BATNA?", options: ["Immediately", "Only if beneficial/necessary", "Never"], correctAnswer: 1 }
+                    { id: 'm3q1', type: 'multiple-choice', text: 'The phone is ringing. "I ____ get it!"', options: ['am going to', 'will'], correctAnswer: 1 },
+                    { id: 'm3q2', type: 'fill-blank', text: 'Look at the traffic. We ____ (be) late.', correctAnswer: 'are going to be' },
+                    { id: 'm3q3', type: 'multiple-choice', text: 'I ____ Tom tonight. We are going to the cinema.', options: ['see', 'am seeing'], correctAnswer: 1 },
+                    { id: 'm3q4', type: 'fill-blank', text: 'In 2030, people ____ (buy) different things.', correctAnswer: 'will buy' },
+                    { id: 'm3q5', type: 'matching', text: 'Match usage.', matchingPairs: [{ left: 'Intention', right: 'Going to' }, { left: 'Offer', right: 'Will' }, { left: 'Arrangement', right: 'Present Continuous' }] }
                 ]
             }
         },
-
-        // ===================================
-        // MODULE 4: Global Presentation Skills
-        // ===================================
+        // ==================================================================================
+        // MODULE 4: Modals
+        // ==================================================================================
         {
-            id: "m4",
-            title: "Module 4: Global Presentation Skills",
-            description: "Business is global. This module covers the essential skills for presenting across cultures, focusing on Hall's High/Low context theory and the art of data storytelling.",
-            duration: "2 Hours",
-            outcomes: [
-                "Navigate cross-cultural communication gaps using Hall's Context Theory",
-                "Present complex data as a compelling narrative",
-                "Avoid common cultural faux-pas in international meetings"
-            ],
+            id: 'mod-4',
+            title: 'Module 4: Modals & Auxiliaries',
             lessons: [
                 {
-                    id: "u4c1", title: "Storytelling with Data", completed: false,
-                    duration: "40 min",
-                    difficulty: "Intermediate",
-                    description: "Turning spreadsheets into stories that drive decision making.",
-                    blocks: [
-                        { id: "u4b1", type: "image", content: "https://images.unsplash.com/photo-1551288049-bebda4e38f71", title: "Data Visualization" },
-                        { id: "u4b2", type: "text", content: "### Don't Just Show the Chart\n\nData without a story is just noise. A common mistake in presentations is dumping a spreadsheet on a slide and hoping the audience sees the insight. They won't. They will just check their phones.\n\nUse **Freytag's Pyramid** (the structure of dramatic fiction) for data presentations:\n\n1.  **Exposition (The Status Quo)**: Show the baseline data. *\"For the last three years, revenue has been flat at $10M.\"*\n2.  **Inciting Incident (The Change)**: Introduce the variable. *\"However, Competitor X just entered the market with a lower price point.\"*\n3.  **Rising Action (The Struggle)**: Show the negative trend. *\"In Q4, we saw our first dip in renewal rates, down 15%.\"*\n4.  **Climax (The Insight)**: The 'Aha' moment. *\"The data shows this drop is entirely in the Gen Z demographic. They aren't leaving on price; they are leaving on UX.\"*\n5.  **Resolution (The Strategy)**: The proposal. *\"Therefore, we don't need to cut prices. We need to overhaul our mobile app.\"*\n\nBy wrapping the numbers in a narrative arc (Status Quo -> Conflict -> Resolution), you make the data memorable and actionable." }
-                    ]
+                    id: 'l-4-1', title: 'Can, Could and (Be) Able To', duration: '25 min', difficulty: 'Intermediate', completed: false, description: 'Ability.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 26: Can/Could\n\n"I can make these data."\n"I could run fast when I was a boy."' },
+                        { id: 'b2', type: 'image', title: 'Running', content: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Can Could Video', content: 'https://www.youtube.com/embed/L9AWrJnhsRI' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'fill-blank', text: 'I ____ (not/can) sleep last night.', correctAnswer: 'could not' }, { id: 'q2', type: 'multiple-choice', text: '____ you swim?', options: ['Can', 'May'], correctAnswer: 0 }, { id: 'q3', type: 'fill-blank', text: 'I will be ____ (able) do it.', correctAnswer: 'able to' }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
                 },
                 {
-                    id: "u4c2", title: "High vs Low Context Cultures", completed: false,
-                    duration: "50 min",
-                    difficulty: "Advanced",
-                    description: "Understanding the invisible rules of international communication.",
-                    blocks: [
-                        { id: "u4b4", type: "text", content: "### Hall's Cultural Context Theory\n\nEdward T. Hall categorized cultures into 'High Context' and 'Low Context'. Understanding where your audience falls on this spectrum is critical for international presentations.\n\n#### Low Context (USA, Germany, Scandinavia, Australia)\n*   **Communication**: Explicit, direct, and literal.\n*   **The Message**: Is entirely in the words asserted. Yes means Yes. No means No.\n*   **Presentation Style**: Be concise. Use bullet points. State the bottom line first. Direct disagreement is seen as honest and productive.\n\n#### High Context (Japan, China, Arab World, Latin America)\n*   **Communication**: Implicit, layered, and nuanced.\n*   **The Message**: Is in the context (who is speaking, the setting, the history). The words are less important. 'Yes' often means 'I hear you,' not 'I agree.'\n*   **Presentation Style**: Focus on relationship building first. Give extensive background/history before the main point. Avoid direct conflict or saying 'No' publicly, as it causes loss of face.\n\n**Key Takeaway**: If you present a 'Low Context' deck (rapid-fire bullet points, aggressive asks) to a 'High Context' audience (Japan), you will be seen as rude and unrefined. If you present a 'High Context' deck (long history, vague asks) to a 'Low Context' audience (New York), you will be seen as indecisive and wasting time." },
-                        {
-                            id: "u4q1", type: "quiz", title: "Cultural IQ",
-                            content: [
-                                {
-                                    id: "q_u4_1", type: "matching",
-                                    text: "Match the Country to the Communication Style:",
-                                    matchingPairs: [
-                                        { left: "Japan", right: "High Context (Read between lines)" },
-                                        { left: "USA", right: "Low Context (Say what you mean)" },
-                                        { left: "Germany", right: "Low Context (Direct/Literal)" }
-                                    ],
-                                    explanation: "Misreading context context is the #1 cause of international business failure."
-                                }
-                            ]
-                        }
-                    ],
-                    resources: [
-                        { title: "Erin Meyer: The Culture Map", url: "https://erinmeyer.com/books/the-culture-map/", type: "web" }
-                    ]
+                    id: 'l-4-2', title: 'Must and Can\'t (Deduction)', duration: '25 min', difficulty: 'Intermediate', completed: false, description: 'Deduction.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 28: Deduction\n\nTo express certainty based on evidence.' },
+                        { id: 'b2', type: 'image', title: 'Thinking', content: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Deduction Video', content: 'https://www.youtube.com/embed/5D3o5q5V_3g' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: 'You passed? You ____ be happy.', options: ['must', 'can\'t'], correctAnswer: 0 }, { id: 'q2', type: 'fill-blank', text: 'It ____ (can\'t) be true!', correctAnswer: 'can\'t' }, { id: 'q3', type: 'multiple-choice', text: 'She is eating. She ____ be hungry.', options: ['must', 'must not'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-4-3', title: 'May and Might (Possibility)', duration: '20 min', difficulty: 'Beginner', completed: false, description: 'Possibility.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Unit 29: May/Might\n\nPossible/Not certain.' },
+                        { id: 'b2', type: 'image', title: 'Clouds', content: 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'May Might Video', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: 'It ____ rain.', options: ['might', 'must'], correctAnswer: 0 }, { id: 'q2', type: 'fill-blank', text: 'I ____ (may) go to the party.', correctAnswer: 'may' }, { id: 'q3', type: 'multiple-choice', text: 'He might ____ at home.', options: ['be', 'is'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-4-4', title: 'Must vs. Have to', duration: '30 min', difficulty: 'Intermediate', completed: false, description: 'Obligation.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Must vs Have to\n\nMust is internal.' },
+                        { id: 'b2', type: 'image', title: 'Rules', content: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Obligation Video', content: 'https://www.youtube.com/embed/L9AWrJnhsRI' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: 'I ____ wear a uniform.', options: ['have to', 'must'], correctAnswer: 0 }, { id: 'q2', type: 'fill-blank', text: 'You ____ (must/not) smoke here.', correctAnswer: 'must not' }, { id: 'q3', type: 'multiple-choice', text: 'I ____ get up early yesterday.', options: ['had to', 'must'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-4-5', title: 'Should (Advice)', duration: '20 min', difficulty: 'Beginner', completed: false, description: 'Advice.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Should\n\nGood thing to do.' },
+                        { id: 'b2', type: 'image', title: 'Advice', content: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Should Video', content: 'https://www.youtube.com/embed/0Wrv_ZviMEc' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'fill-blank', text: 'You ____ (should) stop smoking.', correctAnswer: 'should' }, { id: 'q2', type: 'multiple-choice', text: '____ I buy this?', options: ['Should', 'Must'], correctAnswer: 0 }, { id: 'q3', type: 'multiple-choice', text: 'You shouldn\'t ____ so hard.', options: ['work', 'working'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
                 }
             ],
             quiz: {
-                id: "mq4",
-                title: "Module 4 Review: Presentations",
+                title: 'Module 4 Assessment',
                 questions: [
-                    { id: "mq4_1", type: "writing", text: "Rewrite the statement 'Sales are down' as a story opening.", placeholder: "Start with the context..." },
-                    { id: "mq4_2", type: "multiple-choice", text: "In High Context cultures, what is often MORE important than the contract?", options: ["The content", "The relationship", "The price"], correctAnswer: 1 }
+                    { id: 'm4q1', type: 'multiple-choice', text: 'The lights are out. They ____ be home.', options: ['must not', 'can\'t'], correctAnswer: 1 },
+                    { id: 'm4q2', type: 'fill-blank', text: 'I ____ (have to) go to the doctor yesterday.', correctAnswer: 'had to' },
+                    { id: 'm4q3', type: 'multiple-choice', text: 'You ____ eat that. It is bad for you.', options: ['should', 'should not'], correctAnswer: 1 },
+                    { id: 'm4q4', type: 'fill-blank', text: '____ (Can) you open the door, please?', correctAnswer: 'Can' },
+                    { id: 'm4q5', type: 'matching', text: 'Match.', matchingPairs: [{ left: 'Must', right: 'Obligation' }, { left: 'Might', right: 'Possibility' }, { left: 'Should', right: 'Advice' }] }
+                ]
+            }
+        },
+        // ==================================================================================
+        // MODULE 5: Passive & Reported
+        // ==================================================================================
+        {
+            id: 'mod-5',
+            title: 'Module 5: Passive Voice & Reported',
+            lessons: [
+                {
+                    id: 'l-5-1', title: 'Passive Voice 1', duration: '30 min', difficulty: 'Intermediate', completed: false, description: 'Basics.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Passive Voice\n\nObject + be + Past Participle.' },
+                        { id: 'b2', type: 'image', title: 'Built', content: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Passive Video', content: 'https://www.youtube.com/embed/nkO9g0qS2CA' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: 'The room ____ every day.', options: ['is cleaned', 'cleans'], correctAnswer: 0 }, { id: 'q2', type: 'fill-blank', text: 'Glass ____ (make) from sand.', correctAnswer: 'is made' }, { id: 'q3', type: 'multiple-choice', text: 'The house ____ yesterday.', options: ['painted', 'was painted'], correctAnswer: 1 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-5-2', title: 'Passive Voice 2', duration: '30 min', difficulty: 'Advanced', completed: false, description: 'Advanced.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Passive 2\n\nBeing done / has been done.' },
+                        { id: 'b2', type: 'image', title: 'Being Cleaned', content: 'https://images.unsplash.com/photo-1581578731117-10d78b211289?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Passive 2 Video', content: 'https://www.youtube.com/embed/1v6m4j6j8oA' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'fill-blank', text: 'The car is ____ (repair) at the moment.', correctAnswer: 'being repaired' }, { id: 'q2', type: 'multiple-choice', text: 'The room looks nice. It ____ cleaned.', options: ['has been', 'was'], correctAnswer: 0 }, { id: 'q3', type: 'multiple-choice', text: 'My key ____ stolen.', options: ['has been', 'is being'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-5-3', title: 'Reported Speech 1', duration: '35 min', difficulty: 'Intermediate', completed: false, description: 'Reporting Statements.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Reported Speech\n\nBackshift tenses.' },
+                        { id: 'b2', type: 'image', title: 'Gossip', content: 'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Reported Video', content: 'https://www.youtube.com/embed/M4b22jUqG5A' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'fill-blank', text: '"I am tired." -> He said he ____ (be) tired.', correctAnswer: 'was' }, { id: 'q2', type: 'multiple-choice', text: '"I will be there." -> He said he ____ be there.', options: ['will', 'would'], correctAnswer: 1 }, { id: 'q3', type: 'fill-blank', text: '"I can swim." -> He said he ____ (can) swim.', correctAnswer: 'could' }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-5-4', title: 'Reported Speech 2', duration: '30 min', difficulty: 'Advanced', completed: false, description: 'Reporting Questions.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Reported Questions\n\nWord order.' },
+                        { id: 'b2', type: 'image', title: 'Questions', content: 'https://images.unsplash.com/photo-1633511090164-b43840ea901d?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Question Video', content: 'https://www.youtube.com/embed/AEBRIBtq7q0' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: '"Where do you live?" -> He asked me where ____.', options: ['did I live', 'I lived'], correctAnswer: 1 }, { id: 'q2', type: 'fill-blank', text: '"Are you married?" -> He asked if I ____ (be) married.', correctAnswer: 'was' }, { id: 'q3', type: 'multiple-choice', text: '"What is your name?" -> He asked what ____.', options: ['my name was', 'was my name'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                },
+                {
+                    id: 'l-5-5', title: 'Conditionals', duration: '30 min', difficulty: 'Advanced', completed: false, description: 'If clauses.', blocks: [
+                        { id: 'b1', type: 'text', content: '# Conditionals\n\nZero, First, Second.' },
+                        { id: 'b2', type: 'image', title: 'If', content: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3a8?auto=format&fit=crop&w=800&q=80' },
+                        { id: 'b3', type: 'youtube', title: 'Conditionals Video', content: 'https://www.youtube.com/embed/0Wrv_ZviMEc' },
+                        { id: 'q1', type: 'quiz', title: 'Quick Check', content: [{ id: 'q1', type: 'multiple-choice', text: 'If it rains, we ____ get wet.', options: ['will', 'would'], correctAnswer: 0 }, { id: 'q2', type: 'fill-blank', text: 'If I ____ (know), I would tell you.', correctAnswer: 'knew' }, { id: 'q3', type: 'multiple-choice', text: 'If water is heated to 100 degrees, it ____.', options: ['boils', 'boiled'], correctAnswer: 0 }] }
+                    ], resources: [{ title: 'List', url: '#', description: 'List' }]
+                }
+            ],
+            quiz: {
+                title: 'Module 5 Assessment',
+                questions: [
+                    { id: 'm5q1', type: 'multiple-choice', text: 'Active: They built the bridge. Passive: The bridge ____.', options: ['was built', 'is built'], correctAnswer: 0 },
+                    { id: 'm5q2', type: 'fill-blank', text: 'He asked correct me if I ____ (like) coffee.', correctAnswer: 'liked' },
+                    { id: 'm5q3', type: 'matching', text: 'Match.', matchingPairs: [{ left: 'Present', right: 'Past' }, { left: 'Will', right: 'Would' }, { left: 'Can', right: 'Could' }] },
+                    { id: 'm5q4', type: 'multiple-choice', text: 'This house ____ 100 years ago.', options: ['was built', 'has been built'], correctAnswer: 0 },
+                    { id: 'm5q5', type: 'fill-blank', text: 'If I had money, I ____ (travel) around the world.', correctAnswer: 'would travel' }
                 ]
             }
         }
     ],
     finalExam: {
         questions: [
-            // 1. Multiple Choice
-            { id: "fq1", type: "multiple-choice", text: "In the 4Ps framework, which element hooks the listener immediately?", options: ["Solution", "Problem", "Ask", "Promise"], correctAnswer: 1 },
-
-            // 2. Fill-in-the-Blank
-            { id: "fq2_fill", type: "fill-blank", text: "Your absolute bottom line in a negotiation is called your ______.", correctAnswer: "BATNA", placeholder: "Acronym...", explanation: "Best Alternative To a Negotiated Agreement" },
-
-            // 3. Matching
-            {
-                id: "fq3_match", type: "matching",
-                text: "Match the Term to its Definition.",
-                matchingPairs: [
-                    { left: "Anchor", right: "The first number put on the table" },
-                    { left: "Low Context", right: "Explicit, direct communication" },
-                    { left: "Inbox Zero", right: "Process of triaging email daily" }
-                ]
-            },
-
-            // 4. Writing
-            { id: "fq4_write", type: "writing", text: "Explain why 'Passive Voice' is often considered weak in business writing.", placeholder: "Passive voice avoids responsibility..." },
-
-            // 5. Audio
-            { id: "fq5_audio", type: "audio", text: "Record yourself giving a 30-second 'Bad News' update using a Formal Tone.", explanation: "Focus on clarity, lack of emotion, and next steps." },
-
-            // 6. Video
-            { id: "fq6_video", type: "video", text: "Upload a video response: Demonstrate the difference between 'Attentive' and 'Dismissive' body language.", explanation: "Eye contact and posture." },
-
-            // Extra Mixed
-            { id: "fq7", type: "multiple-choice", text: "The '2-Minute Rule' suggests you should immediately do a task if:", options: ["It takes < 2 mins", "It is urgent", "Your boss asks"], correctAnswer: 0 }
+            // PAGE 1
+            { id: 'f1', type: 'multiple-choice', text: 'I ____ (see) that film last week.', options: ['see', 'saw', 'have seen'], correctAnswer: 1 },
+            { id: 'f2', type: 'fill-blank', text: 'Where ____ (be) you born?', correctAnswer: 'were' },
+            { id: 'f3', type: 'multiple-choice', text: 'Look at the sky! It ____ rain.', options: ['will', 'is going to'], correctAnswer: 1 },
+            { id: 'f4', type: 'matching', text: 'Match.', matchingPairs: [{ left: 'I am doing', right: 'Now' }, { left: 'I do', right: 'General' }, { left: 'I did', right: 'Past' }] },
+            { id: 'f5', type: 'fill-blank', text: 'I have ____ (know) her since 2010.', correctAnswer: 'known' },
+            // PAGE 2
+            { id: 'f6', type: 'multiple-choice', text: 'You ____ smoke in hospitals.', options: ['don\'t have to', 'must not'], correctAnswer: 1 },
+            { id: 'f7', type: 'writing', text: 'Change to Passive: "Somebody cleaned the room."' },
+            { id: 'f8', type: 'fill-blank', text: 'If I ____ (be) you, I would study harder.', correctAnswer: 'were' },
+            { id: 'f9', type: 'multiple-choice', text: 'He asked me where ____.', options: ['I lived', 'did I live'], correctAnswer: 0 },
+            { id: 'f10', type: 'video', text: 'Record a video introducing yourself.' },
+            // PAGE 3
+            { id: 'f11', type: 'audio', text: 'Read: "She sells sea shells on the sea shore."' },
+            { id: 'f12', type: 'matching', text: 'Match the conditionals.', matchingPairs: [{ left: 'Zero', right: 'Facts' }, { left: 'First', right: 'Real Future' }, { left: 'Second', right: 'Unreal Future' }] },
+            { id: 'f13', type: 'multiple-choice', text: 'I enjoy ____.', options: ['to dance', 'dancing'], correctAnswer: 1 },
+            { id: 'f14', type: 'fill-blank', text: 'She is good ____ (at/in) playing piano.', correctAnswer: 'at' },
+            { id: 'f15', type: 'writing', text: 'Write about your last holiday.' }
         ]
     }
 };
