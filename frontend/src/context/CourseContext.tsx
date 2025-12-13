@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import type { CourseData } from "@/data/mockCourse";
+import type { Course } from "@/data/mockCourse";
 import { courseService } from "@/services/api";
 
 interface CourseContextType {
-    course: CourseData | null;
+    course: Course | null;
     isLoading: boolean;
     error: string | null;
     progress: number;
@@ -15,7 +15,7 @@ interface CourseContextType {
 const CourseContext = createContext<CourseContextType | undefined>(undefined);
 
 export function CourseProvider({ children }: { children: React.ReactNode }) {
-    const [course, setCourse] = useState<CourseData | null>(null);
+    const [course, setCourse] = useState<Course | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<number>(0);
@@ -65,15 +65,18 @@ export function CourseProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+
+    const value = React.useMemo(() => ({
+        course,
+        isLoading,
+        error,
+        progress,
+        fetchCourse,
+        completeLesson
+    }), [course, isLoading, error, progress]);
+
     return (
-        <CourseContext.Provider value={{
-            course,
-            isLoading,
-            error,
-            progress,
-            fetchCourse,
-            completeLesson
-        }}>
+        <CourseContext.Provider value={value}>
             {children}
         </CourseContext.Provider>
     );

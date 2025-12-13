@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
     Search, Filter, Upload, FileCode, FileImage, File, BookOpen,
     LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight, FileText,

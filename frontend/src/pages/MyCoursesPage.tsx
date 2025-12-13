@@ -3,7 +3,7 @@ import { useState } from "react";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
     BookOpen, Search, Filter,
     LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight,
