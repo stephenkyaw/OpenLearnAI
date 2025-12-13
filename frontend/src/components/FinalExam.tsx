@@ -303,7 +303,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                             timeLeft < 300 ? "text-destructive custom-pulse" : "text-foreground"
                         )}>
                             <div className={cn(
-                                "flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/50 border border-border/50",
+                                "flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary/50 border border-border/50",
                                 timeLeft < 300 && "bg-destructive/10 border-destructive/20"
                             )}>
                                 <Timer className={cn("w-5 h-5", timeLeft < 300 ? "text-destructive" : "text-primary")} />
@@ -325,7 +325,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
 
                                 <div className="flex items-start gap-5 mb-8">
                                     <div className="flex-none pt-1">
-                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm font-bold text-foreground border border-border/50 shadow-sm">
+                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-sm font-bold text-foreground border border-border/50 shadow-sm">
                                             {actualIndex + 1}
                                         </div>
                                     </div>
@@ -343,7 +343,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                                     key={optIdx}
                                                     onClick={() => handleAnswerChange(q.id, optIdx)}
                                                     className={cn(
-                                                        "flex items-center gap-3 p-3 rounded-lg border-2 transition-all cursor-pointer group/opt",
+                                                        "flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer group/opt",
                                                         answers[q.id] === optIdx
                                                             ? "border-primary bg-primary/5 text-foreground shadow-sm"
                                                             : "border-transparent bg-secondary/20 hover:bg-secondary/40 hover:border-border/50 text-muted-foreground hover:text-foreground"
@@ -368,7 +368,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                                 placeholder={q.placeholder || "Type your answer..."}
                                                 value={answers[q.id] as string || ""}
                                                 onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                                                className="h-11 px-4 rounded-lg text-base border-2 border-border/40 bg-muted/10 focus:bg-background focus:border-primary transition-all shadow-sm"
+                                                className="h-11 px-4 rounded-xl text-base border-2 border-border/40 bg-muted/10 focus:bg-background focus:border-primary transition-all shadow-sm"
                                             />
                                         </div>
                                     )}
@@ -391,7 +391,7 @@ export function FinalExam({ title, description, durationMinutes, questions, pass
                                                                     variant={currentSelection === opt ? "default" : "outline"}
                                                                     onClick={() => handleMatchingChange(q.id, pair.left, opt)}
                                                                     className={cn(
-                                                                        "rounded-lg border-2 text-sm h-10 px-4",
+                                                                        "rounded-xl border-2 text-sm h-10 px-4",
                                                                         currentSelection === opt
                                                                             ? "border-primary shadow-md shadow-primary/20"
                                                                             : "border-transparent bg-card hover:border-border/50"

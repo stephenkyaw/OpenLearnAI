@@ -292,11 +292,11 @@ export function CreateCoursePage() {
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="text-muted-foreground font-medium flex items-center"><FileText className="h-4 w-4 mr-2 opacity-70" /> Files Uploaded</span>
-                                            <span className="font-bold text-foreground bg-secondary px-2.5 py-0.5 rounded-md">{files.length}</span>
+                                            <span className="font-bold text-foreground bg-secondary px-2.5 py-0.5 rounded-full">{files.length}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm">
                                             <span className="text-muted-foreground font-medium flex items-center"><LinkIcon className="h-4 w-4 mr-2 opacity-70" /> External Links</span>
-                                            <span className="font-bold text-foreground bg-secondary px-2.5 py-0.5 rounded-md">{links.length}</span>
+                                            <span className="font-bold text-foreground bg-secondary px-2.5 py-0.5 rounded-full">{links.length}</span>
                                         </div>
                                         <div className="flex justify-between items-center text-sm pt-2 border-t border-border/50">
                                             <span className="text-muted-foreground font-medium">Est. Generation Time</span>

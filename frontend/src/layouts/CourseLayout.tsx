@@ -24,7 +24,7 @@ export function CourseLayout({ children, title }: CourseLayoutProps) {
                     </Link>
                     <div className="h-6 w-px bg-border/50 hidden md:block" />
                     <div className="flex items-center gap-2 hidden md:flex">
-                        <div className="h-8 w-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                        <div className="h-8 w-8 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                             <BookOpen className="h-4 w-4" />
                         </div>
                         <span className="font-bold text-sm tracking-tight text-foreground truncate max-w-[200px] lg:max-w-md">{title}</span>

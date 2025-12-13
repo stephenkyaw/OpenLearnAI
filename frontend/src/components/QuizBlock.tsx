@@ -119,7 +119,7 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                             {/* Question Header */}
                             <div className="flex items-start gap-3 mb-4">
                                 <div className="flex-none">
-                                    <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-sm font-bold text-muted-foreground border border-border/50">
+                                    <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center text-sm font-bold text-muted-foreground border border-border/50">
                                         {idx + 1}
                                     </div>
                                 </div>
@@ -137,7 +137,7 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                                                 key={optIdx}
                                                 onClick={() => handleAnswerChange(q.id, optIdx)}
                                                 className={cn(
-                                                    "flex items-center gap-3 p-2.5 rounded-lg border transition-all cursor-pointer group/opt",
+                                                    "flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer group/opt",
                                                     !submitted && answers[q.id] === optIdx
                                                         ? "border-primary bg-primary/5 text-foreground shadow-sm"
                                                         : "border-transparent bg-secondary/30 hover:bg-secondary/60 hover:border-border/50 text-muted-foreground hover:text-foreground",
@@ -175,14 +175,14 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                                                 value={userAns as string || ""}
                                                 onChange={(e) => handleAnswerChange(q.id, e.target.value)}
                                                 className={cn(
-                                                    "h-10 rounded-lg text-base border-border/60 bg-muted/20 focus:bg-background focus:border-primary transition-all shadow-sm",
+                                                    "h-10 rounded-xl text-base border-border/60 bg-muted/20 focus:bg-background focus:border-primary transition-all shadow-sm",
                                                     submitted && isCorrect && "border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-900/20 dark:text-emerald-100",
                                                     submitted && !isCorrect && "border-destructive bg-destructive/5 text-destructive"
                                                 )}
                                             />
                                         </div>
                                         {submitted && !isCorrect && (
-                                            <div className="mt-2 text-sm font-medium text-emerald-600 animate-in fade-in flex items-center gap-1 bg-emerald-500/10 w-fit px-3 py-1 rounded-lg border border-emerald-500/20">
+                                            <div className="mt-2 text-sm font-medium text-emerald-600 animate-in fade-in flex items-center gap-1 bg-emerald-500/10 w-fit px-3 py-1 rounded-xl border border-emerald-500/20">
                                                 <CheckCircle className="w-3 h-3" /> Correct Answer: <span className="font-bold ml-1">{q.correctAnswer}</span>
                                             </div>
                                         )}
@@ -207,7 +207,7 @@ export function QuizBlock({ title, questions, onComplete, isEmbedded = false }: 
                                                                 variant={!submitted && currentSelection === opt ? "default" : "outline"}
                                                                 onClick={() => handleMatchingChange(q.id, pair.left, opt)}
                                                                 className={cn(
-                                                                    "rounded-lg border-border/50 text-sm h-9",
+                                                                    "rounded-xl border-border/50 text-sm h-9",
                                                                     !submitted && currentSelection === opt && "shadow-md shadow-primary/20",
                                                                     submitted && currentSelection === opt && isPairCorrect && "bg-emerald-500 border-emerald-500 text-white hover:bg-emerald-600",
                                                                     submitted && currentSelection === opt && !isPairCorrect && "bg-destructive border-destructive text-white hover:bg-destructive"
